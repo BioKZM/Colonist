@@ -74,7 +74,8 @@ async def ekle(ctx):
 	if ctx.author.id == 373457193271558145 or ctx.author.id == 275971871047024640:
 		
 		guild = ctx.guild
-		liste = ["Partner","Chief of the Colony","Mars Lover","Colony Manager","Judge","Captain","Crew","Open Crew","Colony Member","Guest"]
+ 		liste = ["Partner","Chief of the Colony","Mars Lover","Colony Manager","Judge","Captain","Crew","Open Crew","Colony Member","Guest"]
+		#liste = ["Partner","Chief of the Colony","Mars Lover","Colony Manager","Judge","Captain","Crew","Open Crew","Colony Member","Guest"]
 		for role in liste:
 			await guild.create_role(name=role)
 		message = await ctx.send("Rol ekleme işlemi başarıyla tamamlandı!")
