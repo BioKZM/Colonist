@@ -1,5 +1,5 @@
 1250
-5
+1
 Colony Member
 2
 False
