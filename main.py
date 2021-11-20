@@ -245,7 +245,6 @@ async def voicech():
 						dosya.close()
 			else:
 				pass
-				
 
 		members = voicechannel.members
 		
@@ -337,6 +336,184 @@ voicech.start()
 
 
 
+@client.command()
+async def emojiMessage(ctx):
+	gameDirector = "🎬"
+	gameDesigner = "🎮"
+	levelDesigner = "🕹️"
+	scriptWriter = "📕"
+	interpreter = "🌍"
+	uxDesigner = "⚠️"
+	socialMediaExpert = "👍"
+	gameDeveloper = "⌨️"
+	visualArtist = "🎨"
+	pixelArtist = "👾"
+	_3dArtist = "🧊"
+	_2dArtist = "🖼️"
+	cellAnimator = "🏃‍♀️"
+	vfxArtist = "💥"
+	uiDesigner = "📺"
+	soundDesigner = "🎵"
+	folleyArtist = "📣"
+	voiceActor = "🎤"
+	singer = "👩‍🎤"
+	dancer = "💃"
+	detective = "🕵️"
+	vampire = "🧛"
+	fighter = "⚔️"
+	ranger = "🏹"
+	wizard = "🧙‍♂️"
+	astronaut = "🚀"
+	duhan = "🌪️"
+
+	emojis = [gameDirector,gameDesigner,levelDesigner,scriptWriter,interpreter,uxDesigner,socialMediaExpert,gameDeveloper,visualArtist,pixelArtist,_3dArtist,_2dArtist,cellAnimator,vfxArtist,uiDesigner,soundDesigner,folleyArtist,voiceActor,singer,dancer]
+	emojis2=[detective,vampire,fighter,ranger,wizard,astronaut,duhan]
+	embed = discord.Embed(title="Yeteneklerin",description="Gemide eksik olan mürettebat sen olabilirsin.\nYeteneklerini işaretle! Rolünü seç! Gizli yetenek olmaktan çık!\n\n🎬:Game Director\n🎮:Game Designer\n🕹️: Level Designer\n📕:Script Writer\n🌍:Interpreter\n⚠️:UX Designer\n👍:Social Media Expert\n⌨️: Game Developer\n🎨: Visual Artist\n👾:Pixel Artist\n🧊:3D Artist\n🖼️:2D Artist\n🏃‍♀️:Cell Animator\n💥:VFX Artist\n📺:UI Designer\n🎵:Sound Designer\n📣:Folley Artist\n🎤:Voice Actor\n👩‍🎤:Singer\n💃:Dancer\n🕵️:Detective\n🧛:Vampire\n⚔️:Fighter\n:🏹Ranger\n🧙‍♂️:Wizard\n🚀:Astronaut\n🌪️:Duhan",color=0x6A0DAD)
+	message = await ctx.channel.send(embed=embed)
+	message2 = await ctx.channel.send("Aşağıdaki emojilere basarak rollerini seçebilirsin.")
+	message3 = await ctx.channel.send("Devamı ↓ ")
+	for emoji in emojis:
+		await message2.add_reaction(emoji)
+	for emoji in emojis2:
+		await message3.add_reaction(emoji)
+
+
+
+@client.event
+async def on_raw_reaction_add(payload):
+	channel = payload.channel_id
+	member = payload.member
+	reaction = payload.emoji
+	guild = client.get_guild(payload.guild_id)
+
+	if channel == 874040848239718431:
+		if member.bot:
+			pass
+
+		if str(reaction) == "🎬":
+			role = get(payload.guild.roles,name="Game Director 🎬")
+
+		if str(reaction) == "🎮":
+			role = get(payload.guild.roles,name="Game Designer 🎮")
+
+		if str(reaction) == "🕹️":
+			role = get(payload.guild.roles,name="Level Designer 🕹️")
+
+		if str(reaction) == "📕":
+			role = get(payload.guild.roles,name="Script Writer 📕")		
+		
+		if str(reaction) == "🌍":
+			role = get(payload.guild.roles,name="Interpreter 🌍")
+		
+		if str(reaction) == "⚠️":
+			role = get(payload.guild.roles,name="UX Designer ⚠️")
+		
+		if str(reaction) == "👍":
+			role = get(payload.guild.roles,name="Social Media Expert 👍")
+		
+		if str(reaction) == "⌨️":
+			role = get(payload.guild.roles,name="Game Developer ⌨️")
+		
+		if str(reaction) == "🎨":
+			role = get(payload.guild.roles,name="Visual Artist 🎨")
+		
+		if str(reaction) == "👾":
+			role = get(payload.guild.roles,name="Pixel Artist 👾")
+		
+		if str(reaction) == "🧊":
+			role = get(payload.guild.roles,name="3D Artist 🧊")
+		
+		if str(reaction) == "🖼️":
+			role = get(payload.guild.roles,name="2D Artist 🖼️")
+		
+		if str(reaction) == "🏃‍♀️":
+			role = get(payload.guild.roles,name="Cell Animator 🏃‍♀️")
+		
+		if str(reaction) == "💥":
+			role = get(payload.guild.roles,name="VFX Artist 💥")
+
+		if str(reaction) == "📺":
+			role = get(payload.guild.roles,name="UI Designer 📺")
+		
+		if str(reaction) == "🎵":
+			role = get(payload.guild.roles,name="Sound Designer 🎵")
+
+		if str(reaction) == "📣":
+			role = get(payload.guild.roles,name="Folley Artist 📣")
+		
+		if str(reaction) == "🎤":
+			role = get(payload.guild.roles,name="Voice Actor 🎤")
+		
+		if str(reaction) == "👩‍🎤":
+			role = get(payload.guild.roles,name="Singer 👩‍🎤")
+		
+		if str(reaction) == "💃":
+			role = get(payload.guild.roles,name="Dancer 💃")
+		
+		if str(reaction) == "🕵️":
+			role = get(payload.guild.roles,name="Detective 🕵️")
+		
+		if str(reaction) == "🧛":
+			role = get(payload.guild.roles,name="Vampire 🧛")
+
+		if str(reaction) == "⚔️":
+			role = get(payload.guild.roles,name="Fighter ⚔️")
+		
+		if str(reaction) == "🏹":
+			role = get(payload.guild.roles,name="Ranger 🏹")
+
+		if str(reaction) == "🧙‍♂️":
+			role = get(payload.guild.emojis,name="Wizard 🧙‍♂️")
+		
+		if str(reaction) == "🚀":
+			role = get(payload.guild.emojis,name="Astronaut 🚀")
+
+		if str(reaction) == "🌪️":
+			role = get(payload.guild.emojis,name="Duhan 🌪️")
+			
+		await member.add_roles(role)
+	
+	
+	
+	
+	# gameDirector = payload.get_emoji("🎬")
+	# gameDesigner = payload.get_emoji("🎮")
+	# levelDesigner = payload.get_emoji("🕹️")
+	# scriptWriter = payload.get_emoji("📕")
+	# interpreter = payload.get_emoji("🌍")
+	# uxDesigner = payload.get_emoji("⚠️")
+	# socialMediaExpert = payload.get_emoji("👍")
+	# gameDeveloper = payload.get_emoji("⌨️")
+	# visualArtist = payload.get_emoji("🎨")
+	# pixelArtist = payload.get_emoji("👾")
+	# _3dArtist = payload.get_emoji("🧊")
+	# _2dArtist = payload.get_emoji("🖼️")
+	# cellAnimator = payload.get_emoji("🏃‍♀️")
+	# vfxArtist = payload.get_emoji("💥")
+	# uiDesigner = payload.get_emoji("📺")
+	# soundDesigner = payload.get_emoji("🎵")
+	# folleyArtist = payload.get_emoji("📣")
+	# voiceActor = payload.get_emoji("🎤")
+	# singer = payload.get_emoji("👩‍🎤")
+	# dancer = payload.get_emoji("💃")
+	# detective = payload.get_emoji("🕵️")
+	# vampire = payload.get_emoji("🧛")
+	# fighter = payload.get_emoji("⚔️")
+	# ranger = payload.get_emoji("🏹")
+	# wizard = payload.get_emoji("🧙‍♂️")
+	# astronaut = payload.get_emoji("🚀")
+	# duhan = payload.get_emoji("🌪️")
+	# emojis = [gameDirector,gameDesigner,levelDesigner,scriptWriter,interpreter,uxDesigner,socialMediaExper,gameDeveloper,visualArtist,pixelArtist,_3dArtist,_2dArtist,cellAnimator,vfxArtist,uiDesigner,soundDesigner,folleyArtist,voiceActor,signer,dancer,detective,vampire,fighter,ranger,wizard,astronaut,duhan]
+
+
+
+
+
+# @client.command()
+# async def x(ctx):
+# 	member = ctx.author
+# 	emoji = client.get_emoji=("🎬")
+# 	await ctx.channel.send(emoji)			
 
 @client.command(aliases=["level"])
 async def seviye(ctx,member:discord.Member=None):
