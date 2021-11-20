@@ -74,7 +74,8 @@ async def ekle(ctx):
 	if ctx.author.id == 373457193271558145 or ctx.author.id == 275971871047024640:
 		
 		guild = ctx.guild
- 		liste = ["Partner","Chief of the Colony","Mars Lover","Colony Manager","Judge","Captain","Crew","Open Crew","Colony Member","Guest"]
+		liste = ["Game Director 🎬","Game Designer 🎮","Level Designer 🕹️","Script Writer 📕","Interpreter 🌍","UX Designer ⚠️","Social Media Expert 👍","Game Developer ⌨️","Visual Artist 🎨","Pixel Artist 👾","3D Artist 🧊","2D Artist 🖼️","Cell Animator️ 🏃‍♀️","VFX Artist 💥","UI Designer 📺","Sound Designer 🎵","Folley Artist 📣","Voice Actor 🎤","Singer 👩‍🎤","Dancer 💃","Detective 🕵️","Vampire 🧛","Fighter ⚔️","Ranger 🏹","Wizard 🧙‍♂️","Astronaut 🚀","Duhan 🌪️"]
+		
 		#liste = ["Partner","Chief of the Colony","Mars Lover","Colony Manager","Judge","Captain","Crew","Open Crew","Colony Member","Guest"]
 		for role in liste:
 			await guild.create_role(name=role)
