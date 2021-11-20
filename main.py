@@ -478,7 +478,101 @@ async def on_raw_reaction_add(payload):
 		
 	
 	
-	
+@client.event
+async def on_raw_reaction_remove(payload):
+	channel = payload.channel_id
+	member = payload.member
+	reaction = payload.emoji
+	guild = client.get_guild(payload.guild_id)
+
+	if channel == 911605487110357043:
+		if member.bot:
+			pass
+		else:
+				
+			if str(reaction) == "🎬":
+				role = get(guild.roles,name="Game Director 🎬")
+
+			if str(reaction) == "🎮":
+				role = get(guild.roles,name="Game Designer 🎮")
+
+			if str(reaction) == "🕹️":
+				role = get(guild.roles,name="Level Designer 🕹️")
+
+			if str(reaction) == "📕":
+				role = get(guild.roles,name="Script Writer 📕")		
+			
+			if str(reaction) == "🌍":
+				role = get(guild.roles,name="Interpreter 🌍")
+			
+			if str(reaction) == "⚠️":
+				role = get(guild.roles,name="UX Designer ⚠️")
+			
+			if str(reaction) == "👍":
+				role = get(guild.roles,name="Social Media Expert 👍")
+			
+			if str(reaction) == "⌨️":
+				role = get(guild.roles,name="Game Developer ⌨️")
+			
+			if str(reaction) == "🎨":
+				role = get(guild.roles,name="Visual Artist 🎨")
+			
+			if str(reaction) == "👾":
+				role = get(guild.roles,name="Pixel Artist 👾")
+			
+			if str(reaction) == "🧊":
+				role = get(guild.roles,name="3D Artist 🧊")
+			
+			if str(reaction) == "🖼️":
+				role = get(guild.roles,name="2D Artist 🖼️")
+			
+			if str(reaction) == "🏃‍♀️":
+				role = get(guild.roles,name="Cell Animator 🏃‍♀️")
+			
+			if str(reaction) == "💥":
+				role = get(guild.roles,name="VFX Artist 💥")
+
+			if str(reaction) == "📺":
+				role = get(guild.roles,name="UI Designer 📺")
+			
+			if str(reaction) == "🎵":
+				role = get(guild.roles,name="Sound Designer 🎵")
+
+			if str(reaction) == "📣":
+				role = get(guild.roles,name="Folley Artist 📣")
+			
+			if str(reaction) == "🎤":
+				role = get(guild.roles,name="Voice Actor 🎤")
+			
+			if str(reaction) == "👩‍🎤":
+				role = get(guild.roles,name="Singer 👩‍🎤")
+			
+			if str(reaction) == "💃":
+				role = get(guild.roles,name="Dancer 💃")
+			
+			if str(reaction) == "🕵️":
+				role = get(guild.roles,name="Detective 🕵️")
+			
+			if str(reaction) == "🧛":
+				role = get(guild.roles,name="Vampire 🧛")
+
+			if str(reaction) == "⚔️":
+				role = get(guild.roles,name="Fighter ⚔️")
+			
+			if str(reaction) == "🏹":
+				role = get(guild.roles,name="Ranger 🏹")
+
+			if str(reaction) == "🧙‍♂️":
+				role = get(guild.roles,name="Wizard 🧙‍♂️")
+			
+			if str(reaction) == "🚀":
+				role = get(guild.roles,name="Astronaut 🚀")
+
+			if str(reaction) == "🌪️":
+				role = get(guild.roles,name="Duhan 🌪️")
+				
+			await member.remove_role(role)
+		
 	# gameDirector = payload.get_emoji("🎬")
 	# gameDesigner = payload.get_emoji("🎮")
 	# levelDesigner = payload.get_emoji("🕹️")
