@@ -387,7 +387,7 @@ async def on_raw_reaction_add(payload):
 	reaction = payload.emoji
 	guild = client.get_guild(payload.guild_id)
 
-	if channel == 874040848239718431:
+	if channel == 911605487110357043:
 		if member.bot:
 			pass
 
