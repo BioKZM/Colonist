@@ -1,4 +1,4 @@
-import discord
+import discord 
 import os
 import sys
 import asyncio
@@ -97,7 +97,7 @@ async def sil(ctx):
 		await ctx.channel.send("İşlem tamam!")
 	else:
 		message = await ctx.channel.send("Bu komutu kullanmaya izniniz yok!")
-		await asyncio.sleep(3)
+		await asyncio.sleep(2)
 		await message.delete()
 
 
