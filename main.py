@@ -655,7 +655,15 @@ async def seviye(ctx,member:discord.Member=None):
 # 			embed.add_field(name="Mevcut değerler ",value="Puanı = {}\n Rütbesi = {}".format(XP,level),inline=False)
 # 			embed.add_field(name="Bir sonraki değerler - 🏆",value=f"{level}",inline=False)
 # 			await ctx.send(embed=embed
-
+@client.command()
+async def emojiekle(ctx,emoji):
+	if ctx.author.id == 373457193271558145 or ctx.author.id == 275971871047024640:
+		channel = get(ctx.guild.channels,id=905888377071616090)
+		emoji = str(emoji)
+		message = await channel.fetch_message(911627238250782790)
+		await message.add_reaction(emoji=emoji)
+	else:
+		pass
 @client.command()
 async def clear(ctx,amount=1):
 	await ctx.channel.purge(limit=amount+1)
