@@ -393,85 +393,85 @@ async def on_raw_reaction_add(payload):
 			pass
 
 		if str(reaction) == "🎬":
-			role = get(payload.guild.roles,name="Game Director 🎬")
+			role = get(guild.roles,name="Game Director 🎬")
 
 		if str(reaction) == "🎮":
-			role = get(payload.guild.roles,name="Game Designer 🎮")
+			role = get(guild.roles,name="Game Designer 🎮")
 
 		if str(reaction) == "🕹️":
-			role = get(payload.guild.roles,name="Level Designer 🕹️")
+			role = get(guild.roles,name="Level Designer 🕹️")
 
 		if str(reaction) == "📕":
-			role = get(payload.guild.roles,name="Script Writer 📕")		
+			role = get(guild.roles,name="Script Writer 📕")		
 		
 		if str(reaction) == "🌍":
-			role = get(payload.guild.roles,name="Interpreter 🌍")
+			role = get(guild.roles,name="Interpreter 🌍")
 		
 		if str(reaction) == "⚠️":
-			role = get(payload.guild.roles,name="UX Designer ⚠️")
+			role = get(guild.roles,name="UX Designer ⚠️")
 		
 		if str(reaction) == "👍":
-			role = get(payload.guild.roles,name="Social Media Expert 👍")
+			role = get(guild.roles,name="Social Media Expert 👍")
 		
 		if str(reaction) == "⌨️":
-			role = get(payload.guild.roles,name="Game Developer ⌨️")
+			role = get(guild.roles,name="Game Developer ⌨️")
 		
 		if str(reaction) == "🎨":
-			role = get(payload.guild.roles,name="Visual Artist 🎨")
+			role = get(guild.roles,name="Visual Artist 🎨")
 		
 		if str(reaction) == "👾":
-			role = get(payload.guild.roles,name="Pixel Artist 👾")
+			role = get(guild.roles,name="Pixel Artist 👾")
 		
 		if str(reaction) == "🧊":
-			role = get(payload.guild.roles,name="3D Artist 🧊")
+			role = get(guild.roles,name="3D Artist 🧊")
 		
 		if str(reaction) == "🖼️":
-			role = get(payload.guild.roles,name="2D Artist 🖼️")
+			role = get(guild.roles,name="2D Artist 🖼️")
 		
 		if str(reaction) == "🏃‍♀️":
-			role = get(payload.guild.roles,name="Cell Animator 🏃‍♀️")
+			role = get(guild.roles,name="Cell Animator 🏃‍♀️")
 		
 		if str(reaction) == "💥":
-			role = get(payload.guild.roles,name="VFX Artist 💥")
+			role = get(guild.roles,name="VFX Artist 💥")
 
 		if str(reaction) == "📺":
-			role = get(payload.guild.roles,name="UI Designer 📺")
+			role = get(guild.roles,name="UI Designer 📺")
 		
 		if str(reaction) == "🎵":
-			role = get(payload.guild.roles,name="Sound Designer 🎵")
+			role = get(guild.roles,name="Sound Designer 🎵")
 
 		if str(reaction) == "📣":
-			role = get(payload.guild.roles,name="Folley Artist 📣")
+			role = get(guild.roles,name="Folley Artist 📣")
 		
 		if str(reaction) == "🎤":
-			role = get(payload.guild.roles,name="Voice Actor 🎤")
+			role = get(guild.roles,name="Voice Actor 🎤")
 		
 		if str(reaction) == "👩‍🎤":
-			role = get(payload.guild.roles,name="Singer 👩‍🎤")
+			role = get(guild.roles,name="Singer 👩‍🎤")
 		
 		if str(reaction) == "💃":
-			role = get(payload.guild.roles,name="Dancer 💃")
+			role = get(guild.roles,name="Dancer 💃")
 		
 		if str(reaction) == "🕵️":
-			role = get(payload.guild.roles,name="Detective 🕵️")
+			role = get(guild.roles,name="Detective 🕵️")
 		
 		if str(reaction) == "🧛":
-			role = get(payload.guild.roles,name="Vampire 🧛")
+			role = get(guild.roles,name="Vampire 🧛")
 
 		if str(reaction) == "⚔️":
-			role = get(payload.guild.roles,name="Fighter ⚔️")
+			role = get(guild.roles,name="Fighter ⚔️")
 		
 		if str(reaction) == "🏹":
-			role = get(payload.guild.roles,name="Ranger 🏹")
+			role = get(guild.roles,name="Ranger 🏹")
 
 		if str(reaction) == "🧙‍♂️":
-			role = get(payload.guild.emojis,name="Wizard 🧙‍♂️")
+			role = get(guild.roles,name="Wizard 🧙‍♂️")
 		
 		if str(reaction) == "🚀":
-			role = get(payload.guild.emojis,name="Astronaut 🚀")
+			role = get(guild.roles,name="Astronaut 🚀")
 
 		if str(reaction) == "🌪️":
-			role = get(payload.guild.emojis,name="Duhan 🌪️")
+			role = get(guild.roles,name="Duhan 🌪️")
 			
 		await member.add_roles(role)
 	
