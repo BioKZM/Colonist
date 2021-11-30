@@ -1,12 +1,12 @@
 import discord
 import os
-import sys
+# import sys
 import asyncio
-import random
+# import random
 from discord.ext import commands,tasks
 from discord.utils import get
 from keep_alive import keep_alive
-from discord_ui import *
+# from discord_ui import *
 from discord_slash import SlashCommand, SlashContext
 from discord_slash.utils.manage_commands import create_choice, create_option
 from firebase import firebase
@@ -22,7 +22,7 @@ serverURL = os.environ["serverURL"]
 client = commands.Bot(command_prefix=['!','-'], intents=discord.Intents.all(),help_command=None,case_insensitive=True)
 intents = discord.Intents.all()
 intents.members = True
-ui = UI(client)
+# ui = UI(client)
 slash = SlashCommand(client)
 guildID = [888759899226538025]
 
