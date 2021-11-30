@@ -22,7 +22,7 @@ serverURL = os.environ["serverURL"]
 client = commands.Bot(command_prefix=['!','-'], intents=discord.Intents.all(),help_command=None,case_insensitive=True)
 intents = discord.Intents.all()
 intents.members = True
-# ui = UI(client)
+# ui = UI(client) 
 slash = SlashCommand(client)
 guildID = [888759899226538025]
 
