@@ -1,12 +1,12 @@
 import discord
 import os
-# import sys
+import sys
 import asyncio
-# import random
+import random
 from discord.ext import commands,tasks
 from discord.utils import get
 from keep_alive import keep_alive
-# from discord_ui import * 
+from discord_ui import *
 from discord_slash import SlashCommand, SlashContext
 from discord_slash.utils.manage_commands import create_choice, create_option
 from firebase import firebase
@@ -22,7 +22,7 @@ serverURL = os.environ["serverURL"]
 client = commands.Bot(command_prefix=['!','-'], intents=discord.Intents.all(),help_command=None,case_insensitive=True)
 intents = discord.Intents.all()
 intents.members = True
-# ui = UI(client) 
+ui = UI(client)
 slash = SlashCommand(client)
 guildID = [888759899226538025]
 
@@ -34,15 +34,6 @@ async def on_ready():
 	print("On Mars Way!")
 	await client.change_presence(status=discord.Status.online,activity=discord.Game("🚀 On My Way To Mars!"))
 
-
-@client.event
-async def on_member_join(member):
-	guild = client.guilds[0]
-	channel = client.get_channel(915299360202448978)
-	await member.edit(nick="👁 WATCHER")
-	role = get(guild.roles,name="Unit")
-	await member.add_roles(role)
-	await channel.send(f"**{member.name}** sunucuya iniş yaptı! Hoşgeldin!")
 @client.event
 async def on_message(message):
 	channel = str(message.channel)
@@ -55,7 +46,7 @@ async def on_message(message):
 			if user.checkBoolMessage() == "True":
 				user.addXP(250)
 				user.changeBoolMessage("False")
-				channel = client.get_channel(id=910547555245494322)
+				channel = client.get_channel(id=914204255894765578)
 				await channel.send(f"<@{memberID}>,<#901248994922098718> kanalında kendinizi tanıttığınız için **250 XP** kazandınız!")
 			else:
 				pass
@@ -207,7 +198,7 @@ class User():
 		self.firebase_.put(f"voiceLevels/{self.memberID}",'boolMessage',message)
 
 
-@tasks.loop(minutes=1)
+@tasks.loop(seconds=5)
 async def voicech():
 	vcList = [channel.id for channel in client.get_all_channels() if channel.type==ChannelType.voice]
 	for channelID in vcList:
@@ -230,7 +221,6 @@ async def voicech():
 				XP = data['XP']
 				maximumXP = data['maximumXP']
 				index = data['nextLevelIndex']
-				currentLevel = data['currentLevel']
 
 				if XP >= maximumXP:
 					index += 1
@@ -238,7 +228,7 @@ async def voicech():
 					user.changeIndex(index)
 					user.changeMaximumXP(index)
 					channel = client.get_channel(id=914204255894765578)
-					await channel.send(f"Tebrikler <@{memberID}>! **{currentLevel}**. seviyeye ulaştın!")
+					await channel.send(f"Tebrikler <@{memberID}>! **{index}**. seviyeye ulaştın!")
 			
 
 @voicech.before_loop
