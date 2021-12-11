@@ -1,5 +1,5 @@
 import asyncio
-import discord
+import discord 
 
 def botEmbed(guild,bot,description,title="",footer="",icon=False):
     botColor = discord.utils.get(guild.members, id=bot.user.id).color
