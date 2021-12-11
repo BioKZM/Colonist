@@ -9,21 +9,27 @@ from keep_alive import keep_alive
 # from discord_ui import * 
 from discord_slash import SlashCommand, SlashContext
 from discord_slash.utils.manage_commands import create_choice, create_option
-from firebase import firebase
-from Files.levels import nextXP, nextLevel
+# from Files.levels import nextXP, nextLevel
 from discord import ChannelType
+from firebase import firebase
+from functions.embed import botEmbed
+from functions.classes import User,experiences,levelNames
+
 global message2
 global message3
 embeds = []
 
-keep_alive()
+# test
 TOKEN = os.environ["TOKEN"]
 serverURL = os.environ["serverURL"]
+keep_alive()
+
+firebase = firebase.FirebaseApplication(serverURL,None)
 client = commands.Bot(command_prefix=['!','-'], intents=discord.Intents.all(),help_command=None,case_insensitive=True)
 intents = discord.Intents.all()
 intents.members = True
-# ui = UI(client) 
-slash = SlashCommand(client)
+# ui = UI(client)
+slash = SlashCommand(client,sync_commands=True)
 guildID = [888759899226538025]
 
 
@@ -43,18 +49,18 @@ async def on_member_join(member):
 	role = get(guild.roles,name="Unit")
 	await member.add_roles(role)
 	await channel.send(f"**{member.name}** sunucuya iniş yaptı! Hoşgeldin!")
+	User(member.id)
+
 @client.event
 async def on_message(message):
 	channel = str(message.channel)
 	memberID = message.author.id
-	user = User(memberID)
-	if message.author.bot:
-		pass
-	else:
+	if not message.author.bot:
+		user = User(memberID)
 		if channel == "kendini-tanıt":
-			if user.checkBoolMessage() == "True":
+			if user.boolMessage == "True":
 				user.addXP(250)
-				user.changeBoolMessage("False")
+				user.update('boolMessage','False')
 				channel = client.get_channel(id=910547555245494322)
 				await channel.send(f"<@{memberID}>,<#901248994922098718> kanalında kendinizi tanıttığınız için **250 XP** kazandınız!")
 			else:
@@ -77,7 +83,7 @@ async def ekle(ctx):
 	if ctx.author.id == 373457193271558145 or ctx.author.id == 275971871047024640:
 
 		guild = ctx.guild
-		liste = ["Game Director 🎬","Game Designer 🎮","Level Designer 🕹️","Script Writer 📕","Interpreter 🌍","UX Designer ⚠️","Social Media Expert 👍","Game Developer ⌨️","Visual Artist 🎨","Pixel Artist 👾","3D Artist 🧊","2D Artist 🖼️","Cell Animator️ 🏃‍♀️","VFX Artist 💥","UI Designer 📺","Sound Designer 🎵","Folley Artist 📣","Voice Actor 🎤","Singer 👩‍🎤","Dancer 💃","Detective 🕵️","Vampire 🧛","Fighter ⚔️","Ranger 🏹","Wizard 🧙‍♂️","Astronaut 🚀","Duhan 🌪️"]
+		# liste = ["Game Director 🎬","Game Designer 🎮","Level Designer 🕹️","Script Writer 📕","Interpreter 🌍","UX Designer ⚠️","Social Media Expert 👍","Game Developer ⌨️","Visual Artist 🎨","Pixel Artist 👾","3D Artist 🧊","2D Artist 🖼️","Cell Animator️ 🏃‍♀️","VFX Artist 💥","UI Designer 📺","Sound Designer 🎵","Folley Artist 📣","Voice Actor 🎤","Singer 👩‍🎤","Dancer 💃","Detective 🕵️","Vampire 🧛","Fighter ⚔️","Ranger 🏹","Wizard 🧙‍♂️","Astronaut 🚀","Duhan 🌪️"]
 
 		for role in liste:
 			await guild.create_role(name=role)
@@ -108,138 +114,57 @@ async def on_voice_state_update(member,prev,cur):
 			user = User(memberID)
 			if memberSituation(prev,cur) == "stream":
 				modifier = user.getModifier(location="yayınÇarpanı")
-				user.changeModifier(modifier=modifier)
+				user.update("modifier",modifier)
 
 			elif memberSituation(prev,cur) == "cam":
 				modifier = user.getModifier(location="kameraÇarpanı")
-			
-				user.changeModifier(modifier=modifier)
+				user.update("modifier",modifier)
 
 			elif memberSituation(prev,cur) == "stream + cam":
 				camModifier = user.getModifier(location="kameraÇarpanı")
 				streamModifier = user.getModifier(location="yayınÇarpanı")
 				modifier = camModifier + streamModifier
-				user.chaneModifier(modifier=modifier)
+				user.update("modifier",modifier)
 		
 			elif memberSituation(prev,cur) == "":
 					modifier = user.getModifier(location="dakikaÇarpanı")
-					user.changeModifier(modifier=modifier)
+					user.update("modifier",modifier)
 					
-
-
-
-
-class User():
-	def __init__(self,memberID):
-		self.memberID = memberID
-		self.serverURL = serverURL
-		self.guild = client.guilds[0]
-		self.firebase_ = firebase.FirebaseApplication(serverURL,None)
-		if self.userNotExists() == None:
-			self.create(self.memberID)
-
-	def userNotExists(self):
-		self.file_there = self.firebase_.get(self.serverURL,f"/voiceLevels/{self.memberID}")
-		return self.file_there
-
-	def updateXP(self,memberID):
-		data = self.getData(memberID)
-		XP = data['XP']
-		modifier = data['modifier']
-		self.firebase_.put(f"/voiceLevels/{memberID}",'XP',XP+modifier)
-
-
-	async def addRole(self,role,member):
-		role = get(self.guild.roles,name=role)
-		await member.add_roles(role)
-		self.firebase_.put(f"/voiceLevels/{self.memberID}",'currentLevel',str(role))
-
-	def create(self,memberID):
-		nextLevel_,maximumXP = self.getLevel(level=0)
-
-		data = {
-				'XP' : 0,
-				'modifier' : 1,
-				'maximumXP' : maximumXP,
-				'currentLevel' : nextLevel_,
-				'nextLevelIndex' : 0,
-				'boolMessage' : 'True',
-				}
-			
-		self.firebase_.put(self.serverURL,f"/voiceLevels/{memberID}",data)
-	
-	def checkBoolMessage(self):
-		data = self.firebase_.get(f"voiceLevels/{self.memberID}",'')
-		boolMessage = data['boolMessage']
-		return boolMessage
-
-	def getData(self,memberID):
-		result = self.firebase_.get(f"/voiceLevels/{memberID}",'')
-		return result
-	
-	def changeMaximumXP(self,index):
-		self.firebase_.put(f"voiceLevels/{self.memberID}",'maximumXP',nextXP[index])
-
-	def changeIndex(self,index):
-		self.firebase_.put(f"/voiceLevels/{self.memberID}",'nextLevelIndex',index)
-
-	def changeModifier(self,modifier):
-		self.firebase_.put(f"/voiceLevels/{self.memberID}",'modifier',modifier)
-	
-	def getModifier(self,location):
-		with open("Files/{}.txt".format(location)) as dosya:
-			okuma = dosya.read().splitlines()
-			modifier = okuma[0]
-			return modifier
-
-	def getLevel(self,level):
-		nextLevel_ = nextLevel[level] 
-		maximumXP = nextXP[level]
-		return nextLevel_, maximumXP
-	
-	def addXP(self,XP):
-		data = self.firebase_.get(f"voiceLevels/{self.memberID}",'')
-		XP_ = data['XP']
-		XP_ += XP
-		self.firebase_.put(f"voiceLevels/{self.memberID}",'XP',XP_)
-	
-	def changeBoolMessage(self,message):
-		self.firebase_.put(f"voiceLevels/{self.memberID}",'boolMessage',message)
 
 
 @tasks.loop(minutes=1)
 async def voicech():
+	guild = client.guilds[0]
 	vcList = [channel.id for channel in client.get_all_channels() if channel.type==ChannelType.voice]
 	for channelID in vcList:
 		voicechannel = client.get_channel(channelID)
-		members_ = [m for m in client.get_all_members()]
-		for member in members_:
-			if not member.bot:
-				memberID = member.id
-				user = User(memberID)
-			
-
 		members = voicechannel.members
+		
+		# Level değerleri yerine XP değerleri yerleştirilip
+		# o şekilde değerlendirilecek.
+
 
 		for member in members:
 			if not member.bot:
-				memberID = member.id
-				user = User(memberID)
-				user.updateXP(memberID)
-				data = user.getData(memberID)
-				XP = data['XP']
-				maximumXP = data['maximumXP']
-				index = data['nextLevelIndex']
-				currentLevel = data['currentLevel']
-
-				if XP >= maximumXP:
-					index += 1
-					await user.addRole(role=nextLevel[index],member=member)
-					user.changeIndex(index)
-					user.changeMaximumXP(index)
-					channel = client.get_channel(id=914204255894765578)
-					await channel.send(f"Tebrikler <@{memberID}>! **{currentLevel}**. seviyeye ulaştın!")
-			
+				user = User(member.id)
+				user.updateXP()
+				# kullanıcının puan şuanki levelinin puanından yüksekse
+				# levelNames[user.level-1]
+				
+				if not user.haveMaxLevel():
+					if user.XP >= user.currentLevelMaxXP:
+						user.level = user.getLevel(user.XP)
+						user.putLevel(user.level)
+						user.levelName = levelNames[user.level-1]
+						role = get(guild.roles, name=user.levelName)
+						await member.add_roles(role)
+						print(role)
+						
+						# send notification
+						channel = client.get_channel(id=910547555245494322)
+						await channel.send(f"Tebrikler <@{member.id}>! **{user.level}**. seviyeye ulaştın!")
+						await asyncio.sleep(3)
+		
 
 @voicech.before_loop
 async def before_voicech():
@@ -489,76 +414,33 @@ async def on_raw_reaction_remove(payload):
 			role = get(guild.roles,name="Duhan 🌪️")
 
 		await member.remove_roles(role)
-		# gameDirector = payload.get_emoji("🎬")
-	# gameDesigner = payload.get_emoji("🎮")
-	# levelDesigner = payload.get_emoji("🕹️")
-	# scriptWriter = payload.get_emoji("📕")
-	# interpreter = payload.get_emoji("🌍")
-	# uxDesigner = payload.get_emoji("⚠️")
-	# socialMediaExpert = payload.get_emoji("👍")
-	# gameDeveloper = payload.get_emoji("⌨️")
-	# visualArtist = payload.get_emoji("🎨")
-	# pixelArtist = payload.get_emoji("👾")
-	# _3dArtist = payload.get_emoji("🧊")
-	# _2dArtist = payload.get_emoji("🖼️")
-	# cellAnimator = payload.get_emoji("🏃‍♀️")
-	# vfxArtist = payload.get_emoji("💥")
-	# uiDesigner = payload.get_emoji("📺")
-	# soundDesigner = payload.get_emoji("🎵")
-	# folleyArtist = payload.get_emoji("📣")
-	# voiceActor = payload.get_emoji("🎤")
-	# singer = payload.get_emoji("👩‍🎤")
-	# dancer = payload.get_emoji("💃")
-	# detective = payload.get_emoji("🕵️")
-	# vampire = payload.get_emoji("🧛")
-	# fighter = payload.get_emoji("⚔️")
-	# ranger = payload.get_emoji("🏹")
-	# wizard = payload.get_emoji("🧙‍♂️")
-	# astronaut = payload.get_emoji("🚀")
-	# duhan = payload.get_emoji("🌪️")
-	# emojis = [gameDirector,gameDesigner,levelDesigner,scriptWriter,interpreter,uxDesigner,socialMediaExper,gameDeveloper,visualArtist,pixelArtist,_3dArtist,_2dArtist,cellAnimator,vfxArtist,uiDesigner,soundDesigner,folleyArtist,voiceActor,signer,dancer,detective,vampire,fighter,ranger,wizard,astronaut,duhan]
-
-
-
-
 
 
 @client.command(aliases=["level"])
 async def seviye(ctx,member:discord.Member=None):
+	# levelNames[(user.level)-1])
 	if member == None:
 		member = ctx.author
-		memberName = ctx.author.name
-		memberID = ctx.author.id
-	else:
-		memberID = member.id
-		memberName = member.name
 
-	user = User(memberID)
-	data = user.getData(memberID)
-	XP = data['XP']
-	currentLevel = data['currentLevel']
-	maximumXP = data['maximumXP']
-	nextXP = maximumXP-XP
-	nextLevelIndex = data['nextLevelIndex']
-	# with open(f"voiceLevels/{member.name}-{memberID}.txt") as dosya:
-	# 	okuma = dosya.read().splitlines()
-	# 	XP = int(okuma[0])
-	# 	rütbe = okuma[2]
-	# 	level = okuma[3]
-	# 	nextInt = int(okuma[3])
-	# 	_nextXP = nextXP[nextInt-1] - XP
-	if nextLevelIndex == 9:
-		embed = discord.Embed(title=f"{memberName}#{member.discriminator} adlı kullanıcının değerleri",description="",color=0x8d42f5)
-		embed.add_field(name="Mevcut değerler - 🏆 ",value="Seviyesi = {}\n Puanı = **{}**\n Rütbesi = **{}**\n".format(nextLevelIndex,XP,currentLevel),inline=False)
-		embed.add_field(name="Bir sonraki değerler - 🚀 ",value="Maksimum seviyeye ulaştınız!",inline=False)
-		embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
-		await ctx.send(embed=embed)
-	else:
-		embed = discord.Embed(title=f"{memberName}#{member.discriminator} adlı kullanıcının değerleri",description="",color=0x8d42f5)
-		embed.add_field(name="Mevcut değerler - 🏆 ",value="Seviyesi = **{}**\n Puanı = **{}**\nRütbesi = **{}**".format(nextLevelIndex,XP,currentLevel),inline=False)
-		embed.add_field(name="Bir sonraki rütbe - 🚀 ",value=f"**{nextLevel[nextLevelIndex+1]}** rütbesi için kalan puan = **{nextXP}**",inline=False)
-		embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
-		await ctx.send(embed=embed)
+	user = User(member.id)
+	if not member.bot:
+		async with ctx.typing():
+			await asyncio.sleep(1)
+			embed = discord.Embed(title=f"{member.name}#{member.discriminator} adlı kullanıcının değerleri",description="",color=0x8d42f5)
+			embed.add_field(name="Mevcut değerler - 🏆 ",value="Seviyesi = **{}**\n Puanı = **{}**\n Rütbesi = **{}**\n".format(user.level,user.XP,user.levelName,inline=False))
+			if user.haveMaxLevel():
+				embed.add_field(name="Bir sonraki rütbe - 🚀 ",value=f"**{levelNames[user.level]}** rütbesi için kalan puan = **{(experiences[user.level-1])-user.XP}**" if not user.haveMaxLevel() else "Maksimum seviyeye ulaştınız!",inline=False)
+			elif not user.haveMaxLevel():
+				if experiences[user.level-1] - user.XP <= 0:
+					embed.add_field(name="Bir sonraki rütbe - 🚀 ",value=f"**{levelNames[user.getLevel(user.XP)-1]}** rütbesine ulaştın! Seviye atlamak için ses kanalına girebilirsin.",inline=False)
+				else:
+					embed.add_field(name="Bir sonraki rütbe - 🚀 ",value=f"**{levelNames[user.level]}** rütbesi için kalan puan = **{(experiences[user.level-1])-user.XP}**",inline=False)
+
+
+		# embed.add_field(name="Bir sonraki rütbe - 🚀 ",value=f"**{levelNames[user.level]}** rütbesi için kalan puan = **{(experiences[user.level])-user.XP}**" if not user.haveMaxLevel() else "Maksimum seviyeye ulaştınız!",inline=False)
+			embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+
+			await ctx.send(embed=embed)
 
 
 @client.command()
@@ -570,6 +452,7 @@ async def emojiekle(ctx,emoji):
 		await message.add_reaction(emoji=emoji)
 	else:
 		pass
+
 @client.command()
 async def clear(ctx,amount=1):
 	if ctx.author.id == 373457193271558145 or ctx.author.id == 275971871047024640:
@@ -579,6 +462,10 @@ async def clear(ctx,amount=1):
 		await ctx.channel.purge(limit=1)
 	else:
 		await ctx.channel.send("Bu komutu kullanmaya izniniz yok!")
+
+def changeModifier(location,modifier):
+	# firebase = firebase.FirebaseApplication(serverURL,None)
+	firebase.put(f"modifiers/{location} Çarpanı",'modifier',modifier)
 
 @slash.slash(
 	name="çarpan",
@@ -616,72 +503,57 @@ async def clear(ctx,amount=1):
 )
 async def _çarpan(ctx:SlashContext,çarpan:int,görüntü:str):
 	if ctx.author.id == 373457193271558145 or ctx.author.id == 275971871047024640:
-
-		if görüntü == "Kamera":
-			embed = discord.Embed(
-				title="Kamera çarpanı değişimi!",
-				description=f"Kamera çarpanı şu değere değiştirildi! = **{çarpan}**",
-				color=0xCC0000)
-			with open("Files/kameraÇarpanı.txt","w") as dosya:
-				dosya.write(str(çarpan))
-				dosya.close()
-			await ctx.send(embed=embed)
-
-		if görüntü == "Yayın":
-			embed = discord.Embed(
-				title="Yayın çarpanı değişimi!",
-				description=f"Yayın çarpanı şu değere değiştirildi! = **{çarpan}**",
-				color=0xCC0000)
-			with open("Files/yayınÇarpanı.txt","w") as dosya:
-				dosya.write(str(çarpan))
-				dosya.close()
-			await ctx.send(embed=embed)
-
-		if görüntü == "Dakika":
-			embed = discord.Embed(
-				title="Dakika çarpanı değişimi!",
-				description=f"Dakika çarpanı şu değere değiştirildi! = **{çarpan}**",
-				color=0xCC0000)
-			with open("Files/dakikaÇarpanı.txt","w") as dosya:
-				dosya.write(str(çarpan))
-				dosya.close()
-			await ctx.send(embed=embed)
+		# Change Multiplier
+		changeModifier(görüntü,çarpan)
+		# with open(f"Files/{görüntü} Çarpanı.txt","w") as dosya:
+		# 	dosya.write(str(çarpan))
+		# 	dosya.close()
+		await ctx.send(embed=botEmbed(ctx.guild,client,f"{görüntü} çarpanı şu değere değiştirildi! = **{çarpan}**",f"{görüntü} çarpanı değişimi!"))
 	else:
 		await ctx.send("Bu komutu kullanmaya izniniz yok!")
 
+def getSortedMembers(ctx):
+	di = {}
+	for member in ctx.guild.members:
+		user = User(member.id)
+		memberName_ = f"{member.display_name} [ A.K.A : {member.name} ]"
+		if not member.bot:
+			di[memberName_] = [user.XP,user.levelName]
+			sortedMembers = dict(sorted(di.items(),key=lambda item:item[1],reverse=True))
+		else:
+			pass
+	return sortedMembers
 
 @client.command(aliases=["rank"])
 async def sıralama(ctx):
-	member = ctx.author
-	top10 = 1
-	embed=discord.Embed(title="Sıralama",inline=False,color=0x8d42f5)
-	embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
-	di = {}
-	members = [m for m in client.get_all_members()]
+	async with ctx.typing():
+		sortedMembers = getSortedMembers(ctx)
+	
+		embed=discord.Embed(title="Sıralama",inline=False,color=0x8d42f5)
+		embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+		# Add fields
+		count = 1
+		
+		await asyncio.sleep(1)
+		for key,value in sortedMembers.items():
+			embed.add_field(name="{} - {}".format(count,key),value="**Puan**: {}\n**Rütbe**: {}".format(value[0],value[1]),inline=False)
+			count += 1
+			if count == 10:break
+
+		await ctx.send(embed=embed)
+
+
+def __addPointToSpaceShip(members, platform, shipRole):
 	for member in members:
-		memberID = member.id
-		memberName = member.name
-		user = User(memberID)
-		memberName_ = f"{member.display_name} [ A.K.A : {member.name} ]"
-		if not member.bot:
-			data = user.getData(memberID)
-			XP = data['XP']
-			currentLevel = data['currentLevel']
-			di[memberName_] = [XP,currentLevel]
-			sözlük = dict(sorted(di.items(),key=lambda item:item[1],reverse=True))
-		else:
-			pass
-
-	for key,value in sözlük.items():
-		if top10 == 11:
-			break
-		embed.add_field(name="{} - {}".format(top10,key),value="**Puan**: {}\n**Rütbe**: {}".format(value[0],value[1]),inline=False)
-		top10 += 1
-
-
-
-	await ctx.send(embed=embed)
-
+		if shipRole in member.roles:
+			user = User(member.id)
+			user.addXP(platformXPs[platform])
+platformXPs = {
+		"PC":10000,
+		"Mobil":5000,
+		"Hypercasual":2000,
+		"GameJam":1000
+	}
 @slash.slash(
 	name="gemipuan",
 	description = "Kullanıcılara ekstra puan vermek için kullan!",
@@ -720,64 +592,14 @@ async def sıralama(ctx):
 		)
 	]
 )
-async def _puan(ctx:SlashContext,platform:str,gemi:str):
-	if ctx.author.id == 275971871047024640 or ctx.author.id == 373457193271558145:
-		checkRole = get(ctx.guild.roles,name=str(gemi))
-		if platform == "PC":
-			members = [m for m in client.get_all_members()]
-			for member in members:
-				memberName = member.name
-				memberID = member.id
-				if checkRole not in member.roles:
-					pass
-				else:
-					user = User(memberID)
-					user.addXP(10000)
-		
-			embed=discord.Embed(title="Puan artışı",description="**{}** adlı geminin mürettebatına **10.000** puan eklendi".format(checkRole.mention),color=member.top_role.color)
-			await ctx.send(embed=embed)
+async def _gemipuan(ctx:SlashContext,platform:str,gemi:str):
+	if ctx.author.id == 373457193271558145 or ctx.author.id == 275971871047024640:
+		shipRole = get(ctx.guild.roles,name=str(gemi))
+		embed = discord.Embed(title="Puan Artışı",description=f"**{shipRole.mention}** adlı geminin mürettebatına **{platformXPs[platform]}** puan eklendi!")
+		await ctx.send(embed=embed)
+		# await ctx.send(embed=botEmbed(ctx.guild,client,description=f"**{shipRole.mention}** adlı geminin mürettebatına **{platformXPs[platform]}** puan eklendi", title="Puan Artışı"))
+		__addPointToSpaceShip(ctx.guild.members, platform, shipRole)
 
-		if platform == "Mobil":
-			members = [m for m in client.get_all_members()]
-			for member in members:
-				memberName = member.name
-				memberID = member.id
-				if checkRole not in member.roles:
-					pass
-				else:
-					user = User(memberID)
-					user.addXP(5000)
-					
-			embed=discord.Embed(title="Puan artışı",description="**{}** adlı geminin mürettebatına **5.000** puan eklendi".format(checkRole.mention),color=member.top_role.color)
-			await ctx.send(embed=embed)
-
-		if platform == "Hypercasual":
-			members = [m for m in client.get_all_members()]
-			for member in members:
-				memberName = member.name
-				memberID = member.id
-				if checkRole not in member.roles:
-					pass
-				else:
-					user = User(memberID)
-					user.addXP(2000)
-
-			embed=discord.Embed(title="Puan artışı",description="**{}** adlı geminin mürettebatına **2.000** puan eklendi".format(checkRole.mention),color=member.top_role.color)
-			await ctx.send(embed=embed)
-
-		if platform == "GameJam":
-			members = [m for m in client.get_all_members()]
-			for member in members:
-				memberName = member.name
-				memberID = member.id
-				if checkRole not in member.roles:
-					pass
-				else:
-					user = User(memberID)
-					user.addXP(1000)
-
-			embed=discord.Embed(title="Puan artışı",description="**{}** adlı geminin mürettebatına **1.000** puan eklendi".format(checkRole.mention),color=member.top_role.color)
-			await ctx.send(embed=embed)
 
 
 @slash.slash(
@@ -799,17 +621,20 @@ async def _puan(ctx:SlashContext,platform:str,gemi:str):
 		)
 	]
 )
-async def _kişiselpuan(ctx:SlashContext,member:discord.Member,puan:int):
+async def _kişiselpuan(ctx:SlashContext,kullanıcı:discord.Member,puan:int):
 	if ctx.author.id == 373457193271558145 or ctx.author.id == 275971871047024640:
-		memberID = member.id
-		memberName = member.name
-		user = User(memberID)
+		user = User(kullanıcı.id)
 		user.addXP(puan)
 		
-		embed=discord.Embed(title="Puan ekleme işlemi",description=f"**{memberName}** adlı kullanıcıya **{puan}** puan eklendi!",color=member.top_role.color)
-		await ctx.send(embed=embed,hidden=True)
+		embed=discord.Embed(title="Puan ekleme işlemi",description=f"**{kullanıcı.name}** adlı kullanıcıya **{puan}** puan eklendi!",color=kullanıcı.top_role.color)
+		await ctx.send(embed=embed)
 	else:
 		await ctx.send("Bu komutu kullanmaya izniniz yok!")
+
+
+""" 
+	TEST COMMANDS
+"""
 
 # @client.command()
 # async def sustur(ctx):
@@ -819,10 +644,12 @@ async def _kişiselpuan(ctx:SlashContext,member:discord.Member,puan:int):
 		# channel = client.get_channel(id=860636538701611050)
 		# await channel.send("İşlem tamam")
 
-@client.command()
-async def DM(ctx,user:discord.Member,*,message=None):
-	await ctx.message.delete()
-	message = message or "Bu mesaj DM yoluyla gönderildi"
-	await user.send(message)
+# @client.command()
+# async def DM(ctx,user:discord.Member,*,message=None):
+# 	await ctx.message.delete()
+# 	message = message or "Bu mesaj DM yoluyla gönderildi"
+# 	await user.send(message)
+
+
 client.run(TOKEN)
 
