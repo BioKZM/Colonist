@@ -1,1 +1,4 @@
 voiceLevels/
+Files/
+__pycache__/
+.vscode/
