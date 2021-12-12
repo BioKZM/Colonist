@@ -2,7 +2,7 @@ import discord
 import os
 # import sys
 import asyncio
-# import random  
+import random
 from discord.ext import commands,tasks
 from discord.utils import get
 from keep_alive import keep_alive
@@ -19,11 +19,11 @@ global message2
 global message3
 embeds = []
 
-# test
+
 TOKEN = os.environ["TOKEN"]
 serverURL = os.environ["serverURL"]
-keep_alive()
 
+keep_alive()
 firebase = firebase.FirebaseApplication(serverURL,None)
 client = commands.Bot(command_prefix=['!','-'], intents=discord.Intents.all(),help_command=None,case_insensitive=True)
 intents = discord.Intents.all()
@@ -108,26 +108,26 @@ def memberSituation(prev,cur):
 
 @client.event
 async def on_voice_state_update(member,prev,cur):
-	memberID = member.id
 	if prev.channel and cur.channel:
 		if not member.bot:
-			user = User(memberID)
+			user = User(member.id)
+			
 			if memberSituation(prev,cur) == "stream":
-				modifier = user.getModifier(location="yayınÇarpanı")
+				modifier = user.getModifier(location="Yayın Çarpanı")
 				user.update("modifier",modifier)
 
 			elif memberSituation(prev,cur) == "cam":
-				modifier = user.getModifier(location="kameraÇarpanı")
+				modifier = user.getModifier(location="Kamera Çarpanı")
 				user.update("modifier",modifier)
 
 			elif memberSituation(prev,cur) == "stream + cam":
-				camModifier = user.getModifier(location="kameraÇarpanı")
-				streamModifier = user.getModifier(location="yayınÇarpanı")
+				camModifier = user.getModifier(location="Kamera Çarpanı")
+				streamModifier = user.getModifier(location="Yayın Çarpanı")
 				modifier = camModifier + streamModifier
 				user.update("modifier",modifier)
 		
 			elif memberSituation(prev,cur) == "":
-					modifier = user.getModifier(location="dakikaÇarpanı")
+					modifier = user.getModifier(location="Dakika Çarpanı")
 					user.update("modifier",modifier)
 					
 
@@ -424,6 +424,23 @@ async def seviye(ctx,member:discord.Member=None):
 
 	user = User(member.id)
 	if not member.bot:
+		if member.id == 276066808887508992:
+			embed = discord.Embed(title=f"{member.name}#{member.discriminator} adlı ku½ll#n$cının de\4r½l%i",description="",color=0x8d42f5)
+			embed.add_field(name="M#vc&-*/$ De¨eßrL3r - ❌",value="Seviyesi = **{}**\nPuanı = **-999999999999**\nRütbesi = **{}**".format("∞","undefined",inline=False))
+			embed.add_field(name="B1r s0½rak` r#t!e - 🔒",value="Bir sonraki rütbe = **unknown**\n[_Hata] = **k[]ll4n1c1 v3R1lEri h4$arLI**",inline=False)
+			embed.set_author(name=ctx.author.display_name,icon_url=ctx.author.avatar_url)
+			message = await ctx.send(embed=embed)
+			
+			embed2 = discord.Embed(title="f adlı ku½ll#n$cının de\4r½l%i",description="",color=0x8d42f5)
+			embed2.add_field(name="P4/7(+n De¨eßrL3r - ❌",value="Er0oR = **{}**\nRütbesi = **{}**\nMevcut = **{}**".format("√52734156","undefined",random.randint(-999999,999999)),inline=False)
+			embed2.add_field(name="B'r s0½rak# r}£!æ - 🔒",value="H½3t_l| d3ğ½9oken = **unknown**\n[_Hata] = **k[u]ll4n1c1 v3R~|Eri hæ$ar/I**",inline=False)
+			embed2.set_author(name=ctx.author.display_name,icon_url=ctx.author.avatar_url)
+			for i in range(0,1000):
+				numbers = [1,2,3]
+				await asyncio.sleep(random.choice(numbers))
+				await message.edit(embed=embed2)
+				await asyncio.sleep(random.choice(numbers))
+				await message.edit(embed=embed)
 		async with ctx.typing():
 			await asyncio.sleep(1)
 			embed = discord.Embed(title=f"{member.name}#{member.discriminator} adlı kullanıcının değerleri",description="",color=0x8d42f5)
@@ -538,7 +555,7 @@ async def sıralama(ctx):
 		for key,value in sortedMembers.items():
 			embed.add_field(name="{} - {}".format(count,key),value="**Puan**: {}\n**Rütbe**: {}".format(value[0],value[1]),inline=False)
 			count += 1
-			if count == 10:break
+			if count == 11:break
 
 		await ctx.send(embed=embed)
 
