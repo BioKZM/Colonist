@@ -58,7 +58,7 @@ async def on_message(message):
 	if not message.author.bot:
 		user = User(memberID)
 		if channel == "kendini-tanıt":
-			if user.boolMessage == "True":
+			if user.boolMessage == True:
 				user.addXP(250)
 				user.update('boolMessage','False')
 				channel = client.get_channel(id=910547555245494322)
