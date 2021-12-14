@@ -139,18 +139,10 @@ async def voicech():
 	for channelID in vcList:
 		voicechannel = client.get_channel(channelID)
 		members = voicechannel.members
-		
-		# Level değerleri yerine XP değerleri yerleştirilip
-		# o şekilde değerlendirilecek.
-
-
 		for member in members:
 			if not member.bot:
 				user = User(member.id)
-				user.updateXP()
-				# kullanıcının puan şuanki levelinin puanından yüksekse
-				# levelNames[user.level-1]
-				
+				user.updateXP()			
 				if not user.haveMaxLevel():
 					if user.XP >= user.currentLevelMaxXP:
 						user.level = user.getLevel(user.XP)
@@ -418,7 +410,6 @@ async def on_raw_reaction_remove(payload):
 
 @client.command(aliases=["level"])
 async def seviye(ctx,member:discord.Member=None):
-	# levelNames[(user.level)-1])
 	if member == None:
 		member = ctx.author
 
@@ -481,7 +472,6 @@ async def clear(ctx,amount=1):
 		await ctx.channel.send("Bu komutu kullanmaya izniniz yok!")
 
 def changeModifier(location,modifier):
-	# firebase = firebase.FirebaseApplication(serverURL,None)
 	firebase.put(f"modifiers/{location} Çarpanı",'modifier',modifier)
 
 @slash.slash(
@@ -520,11 +510,7 @@ def changeModifier(location,modifier):
 )
 async def _çarpan(ctx:SlashContext,çarpan:int,görüntü:str):
 	if ctx.author.id == 373457193271558145 or ctx.author.id == 275971871047024640:
-		# Change Multiplier
 		changeModifier(görüntü,çarpan)
-		# with open(f"Files/{görüntü} Çarpanı.txt","w") as dosya:
-		# 	dosya.write(str(çarpan))
-		# 	dosya.close()
 		await ctx.send(embed=botEmbed(ctx.guild,client,f"{görüntü} çarpanı şu değere değiştirildi! = **{çarpan}**",f"{görüntü} çarpanı değişimi!"))
 	else:
 		await ctx.send("Bu komutu kullanmaya izniniz yok!")
@@ -647,25 +633,6 @@ async def _kişiselpuan(ctx:SlashContext,kullanıcı:discord.Member,puan:int):
 		await ctx.send(embed=embed)
 	else:
 		await ctx.send("Bu komutu kullanmaya izniniz yok!")
-
-
-""" 
-	TEST COMMANDS
-"""
-
-# @client.command()
-# async def sustur(ctx):
-# 	if isinstance(ctx.channel,discord.channel.DMChannel):
-# 		member = get(client.get_all_members(), id=275971871047024640)
-# 		await member.edit(mute = True)
-		# channel = client.get_channel(id=860636538701611050)
-		# await channel.send("İşlem tamam")
-
-# @client.command()
-# async def DM(ctx,user:discord.Member,*,message=None):
-# 	await ctx.message.delete()
-# 	message = message or "Bu mesaj DM yoluyla gönderildi"
-# 	await user.send(message)
 
 
 client.run(TOKEN)
