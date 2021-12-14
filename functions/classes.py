@@ -44,7 +44,7 @@ class User():
 				# self.XP, self.boolMessage,self.modifier = self.getData(self.id)
 				self.__setVariables()
 				# self.level = self.getLevel(self.XP)
-				# self.levelName = levelNames[self.level]
+				# self.levelName = levelNames[self.level] 
 			else:
 				print("Veriler hatalı")
 

@@ -653,7 +653,7 @@ async def _kişiselpuan(ctx:SlashContext,kullanıcı:discord.Member,puan:int):
 	TEST COMMANDS
 """
 
-# @client.command() x	xxx
+# @client.command()
 # async def sustur(ctx):
 # 	if isinstance(ctx.channel,discord.channel.DMChannel):
 # 		member = get(client.get_all_members(), id=275971871047024640)
