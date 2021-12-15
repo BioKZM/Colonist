@@ -14,6 +14,7 @@ from discord import ChannelType
 from firebase import firebase
 from functions.embed import botEmbed
 from functions.classes import User,experiences,levelNames
+from files.embedDictionary import dictionary
 
 global message2
 global message3
@@ -48,8 +49,8 @@ async def on_member_join(member):
 	await member.edit(nick="👁 WATCHER")
 	role = get(guild.roles,name="Unit")
 	await member.add_roles(role)
-	await channel.send(f"**{member.name}** sunucuya iniş yaptı! Hoşgeldin!")
-	User(member.id)
+	await channel.send(f"**{member.name}** ({member.mention}) sunucuya iniş yaptı! Hoşgeldin!")
+	user = User(member.id)
 
 @client.event
 async def on_message(message):
@@ -58,7 +59,7 @@ async def on_message(message):
 	if not message.author.bot:
 		user = User(memberID)
 		if channel == "kendini-tanıt":
-			if user.boolMessage == "True":
+			if user.boolMessage == True:
 				user.addXP(250)
 				user.update('boolMessage','False')
 				channel = client.get_channel(id=910547555245494322)
@@ -77,59 +78,45 @@ async def yardım(ctx):
 	embed.add_field(name="!sıralama `[ !rank ]`",value="Güncel liderlik tablosunu gösterir.",inline=False)
 	await ctx.channel.send(embed=embed)
 
-@client.command()
-async def ekle(ctx):
-	await ctx.message.delete()
-	if ctx.author.id == 373457193271558145 or ctx.author.id == 275971871047024640:
-
-		guild = ctx.guild
-		# liste = ["Game Director 🎬","Game Designer 🎮","Level Designer 🕹️","Script Writer 📕","Interpreter 🌍","UX Designer ⚠️","Social Media Expert 👍","Game Developer ⌨️","Visual Artist 🎨","Pixel Artist 👾","3D Artist 🧊","2D Artist 🖼️","Cell Animator️ 🏃‍♀️","VFX Artist 💥","UI Designer 📺","Sound Designer 🎵","Folley Artist 📣","Voice Actor 🎤","Singer 👩‍🎤","Dancer 💃","Detective 🕵️","Vampire 🧛","Fighter ⚔️","Ranger 🏹","Wizard 🧙‍♂️","Astronaut 🚀","Duhan 🌪️"]
-
-		for role in liste:
-			await guild.create_role(name=role)
-		message = await ctx.send("Rol ekleme işlemi başarıyla tamamlandı!")
-		await asyncio.sleep(3)
-		await message.delete()
-	else:
-		message = await ctx.send("Bu komutu kullanmaya izniniz yok!")
-		await asyncio.sleep(3)
-		await message.delete()
 
 def memberSituation(prev,cur):
-	if prev.self_stream and cur.self_video:
-		return "stream + cam"
-	if not prev.self_stream and cur.self_video:
-		return "cam"
-	if not prev.self_stream and not cur.self_video:
-		return ""
-	if prev.self_stream and not cur.self_video:
-		return "stream"
+	if prev.channel and cur.channel:
+		if cur.self_stream and cur.self_video:
+			return "stream + cam"
+		if cur.self_stream:
+			return "stream"
+		if cur.self_video:
+			return "cam"
+		elif not cur.self_stream and not cur.self_video:
+			return ""
+
+	
 
 
 @client.event
 async def on_voice_state_update(member,prev,cur):
-	if prev.channel and cur.channel:
-		if not member.bot:
-			user = User(member.id)
-			
-			if memberSituation(prev,cur) == "stream":
-				modifier = user.getModifier(location="Yayın Çarpanı")
-				user.update("modifier",modifier)
-
-			elif memberSituation(prev,cur) == "cam":
-				modifier = user.getModifier(location="Kamera Çarpanı")
-				user.update("modifier",modifier)
-
-			elif memberSituation(prev,cur) == "stream + cam":
-				camModifier = user.getModifier(location="Kamera Çarpanı")
-				streamModifier = user.getModifier(location="Yayın Çarpanı")
-				modifier = camModifier + streamModifier
-				user.update("modifier",modifier)
+	if not member.bot:
+		user = User(member.id)
 		
-			elif memberSituation(prev,cur) == "":
-					modifier = user.getModifier(location="Dakika Çarpanı")
-					user.update("modifier",modifier)
-					
+		if memberSituation(prev,cur) == "stream":
+			modifier = user.getModifier(location="Yayın Çarpanı")
+			user.update("modifier",modifier)
+			
+		elif memberSituation(prev,cur) == "cam":
+			modifier = user.getModifier(location="Kamera Çarpanı")
+			user.update("modifier",modifier)
+			
+		elif memberSituation(prev,cur) == "stream + cam":
+			camModifier = user.getModifier(location="Kamera Çarpanı")
+			streamModifier = user.getModifier(location="Yayın Çarpanı")
+			modifier = camModifier + streamModifier
+			user.update("modifier",modifier)
+			
+		elif memberSituation(prev,cur) == "":
+			modifier = user.getModifier(location="Dakika Çarpanı")
+			user.update("modifier",modifier)
+				
+				
 
 
 @tasks.loop(minutes=1)
@@ -139,18 +126,11 @@ async def voicech():
 	for channelID in vcList:
 		voicechannel = client.get_channel(channelID)
 		members = voicechannel.members
-		
-		# Level değerleri yerine XP değerleri yerleştirilip
-		# o şekilde değerlendirilecek.
-
 
 		for member in members:
 			if not member.bot:
 				user = User(member.id)
 				user.updateXP()
-				# kullanıcının puan şuanki levelinin puanından yüksekse
-				# levelNames[user.level-1]
-				
 				if not user.haveMaxLevel():
 					if user.XP >= user.currentLevelMaxXP:
 						user.level = user.getLevel(user.XP)
@@ -160,7 +140,6 @@ async def voicech():
 						await member.add_roles(role)
 						print(role)
 						
-						# send notification
 						channel = client.get_channel(id=910547555245494322)
 						await channel.send(f"Tebrikler <@{member.id}>! **{user.level}**. seviyeye ulaştın!")
 						await asyncio.sleep(3)
@@ -219,12 +198,6 @@ async def emojiMessage(ctx):
 
 	return embeds
 
-@client.command()
-async def embedDüzenle(ctx):
-	global embeds
-	print(embeds)
-	embed = embeds[0]
-
 
 @client.event
 async def on_raw_reaction_add(payload):
@@ -234,92 +207,12 @@ async def on_raw_reaction_add(payload):
 	guild = client.get_guild(payload.guild_id)
 
 	if channel == 905888377071616090:
-		if member.bot:
-			pass
-		else:
-
-			if str(reaction) == "🎬":
-				role = get(guild.roles,name="Game Director 🎬")
-
-			if str(reaction) == "🎮":
-				role = get(guild.roles,name="Game Designer 🎮")
-
-			if str(reaction) == "🕹️":
-				role = get(guild.roles,name="Level Designer 🕹️")
-
-			if str(reaction) == "📕":
-				role = get(guild.roles,name="Script Writer 📕")
-
-			if str(reaction) == "🌍":
-				role = get(guild.roles,name="Interpreter 🌍")
-
-			if str(reaction) == "⚠️":
-				role = get(guild.roles,name="UX Designer ⚠️")
-
-			if str(reaction) == "👍":
-				role = get(guild.roles,name="Social Media Expert 👍")
-
-			if str(reaction) == "⌨️":
-				role = get(guild.roles,name="Game Developer ⌨️")
-
-			if str(reaction) == "🎨":
-				role = get(guild.roles,name="Visual Artist 🎨")
-
-			if str(reaction) == "👾":
-				role = get(guild.roles,name="Pixel Artist 👾")
-
-			if str(reaction) == "🧊":
-				role = get(guild.roles,name="3D Artist 🧊")
-
-			if str(reaction) == "🖼️":
-				role = get(guild.roles,name="2D Artist 🖼️")
-
-			if str(reaction) == "🏃‍♀️":
-				role = get(guild.roles,name="Cell Animator 🏃‍♀️")
-
-			if str(reaction) == "💥":
-				role = get(guild.roles,name="VFX Artist 💥")
-
-			if str(reaction) == "📺":
-				role = get(guild.roles,name="UI Designer 📺")
-
-			if str(reaction) == "🎵":
-				role = get(guild.roles,name="Sound Designer 🎵")
-
-			if str(reaction) == "📣":
-				role = get(guild.roles,name="Folley Artist 📣")
-
-			if str(reaction) == "🎤":
-				role = get(guild.roles,name="Voice Actor 🎤")
-
-			if str(reaction) == "👩‍🎤":
-				role = get(guild.roles,name="Singer 👩‍🎤")
-
-			if str(reaction) == "💃":
-				role = get(guild.roles,name="Dancer 💃")
-
-			if str(reaction) == "🕵️":
-				role = get(guild.roles,name="Detective 🕵️")
-
-			if str(reaction) == "🧛":
-				role = get(guild.roles,name="Vampire 🧛")
-
-			if str(reaction) == "⚔️":
-				role = get(guild.roles,name="Fighter ⚔️")
-
-			if str(reaction) == "🏹":
-				role = get(guild.roles,name="Ranger 🏹")
-
-			if str(reaction) == "🧙‍♂️":
-				role = get(guild.roles,name="Wizard 🧙‍♂️")
-
-			if str(reaction) == "🚀":
-				role = get(guild.roles,name="Astronaut 🚀")
-
-			if str(reaction) == "🌪️":
-				role = get(guild.roles,name="Duhan 🌪️")
-
-			await member.add_roles(role)
+		if not member.bot:
+			channel = get(guild.channels,id=channel)
+			for emoji,role in dictionary.items():
+				if str(reaction) == str(emoji):
+					role = get(guild.roles,name=role)
+					await member.add_roles(role)
 
 
 
@@ -329,96 +222,18 @@ async def on_raw_reaction_remove(payload):
 	guild = client.get_guild(payload.guild_id)
 	member = guild.get_member(payload.user_id)
 	reaction = payload.emoji
-
-
 	if channel == 905888377071616090:
-		if str(reaction) == "🎬":
-			role = get(guild.roles,name="Game Director 🎬")
+		if not member.bot:
+			channel = get(guild.channels,id=channel)
+			for emoji,role in dictionary.items():
+				if str(reaction) == str(emoji):
+					role = get(guild.roles,name=role)
+					await member.remove_roles(role)
 
-		if str(reaction) == "🎮":
-			role = get(guild.roles,name="Game Designer 🎮")
-
-		if str(reaction) == "🕹️":
-			role = get(guild.roles,name="Level Designer 🕹️")
-
-		if str(reaction) == "📕":
-			role = get(guild.roles,name="Script Writer 📕")
-
-		if str(reaction) == "🌍":
-			role = get(guild.roles,name="Interpreter 🌍")
-
-		if str(reaction) == "⚠️":
-			role = get(guild.roles,name="UX Designer ⚠️")
-
-		if str(reaction) == "👍":
-			role = get(guild.roles,name="Social Media Expert 👍")
-
-		if str(reaction) == "⌨️":
-			role = get(guild.roles,name="Game Developer ⌨️")
-
-		if str(reaction) == "🎨":
-			role = get(guild.roles,name="Visual Artist 🎨")
-
-		if str(reaction) == "👾":
-			role = get(guild.roles,name="Pixel Artist 👾")
-
-		if str(reaction) == "🧊":
-			role = get(guild.roles,name="3D Artist 🧊")
-
-		if str(reaction) == "🖼️":
-			role = get(guild.roles,name="2D Artist 🖼️")
-
-		if str(reaction) == "🏃‍♀️":
-			role = get(guild.roles,name="Cell Animator 🏃‍♀️")
-
-		if str(reaction) == "💥":
-			role = get(guild.roles,name="VFX Artist 💥")
-
-		if str(reaction) == "📺":
-			role = get(guild.roles,name="UI Designer 📺")
-
-		if str(reaction) == "🎵":
-			role = get(guild.roles,name="Sound Designer 🎵")
-
-		if str(reaction) == "📣":
-			role = get(guild.roles,name="Folley Artist 📣")
-
-		if str(reaction) == "🎤":
-			role = get(guild.roles,name="Voice Actor 🎤")
-
-		if str(reaction) == "👩‍🎤":
-			role = get(guild.roles,name="Singer 👩‍🎤")
-
-		if str(reaction) == "💃":
-			role = get(guild.roles,name="Dancer 💃")
-
-		if str(reaction) == "🕵️":
-			role = get(guild.roles,name="Detective 🕵️")
-
-		if str(reaction) == "🧛":
-			role = get(guild.roles,name="Vampire 🧛")
-
-		if str(reaction) == "⚔️":
-			role = get(guild.roles,name="Fighter ⚔️")
-
-		if str(reaction) == "🏹":
-			role = get(guild.roles,name="Ranger 🏹")
-
-		if str(reaction) == "🧙‍♂️":
-			role = get(guild.roles,name="Wizard 🧙‍♂️")
-
-		if str(reaction) == "🚀":
-			role = get(guild.roles,name="Astronaut 🚀")
-
-		if str(reaction) == "🌪️":
-			role = get(guild.roles,name="Duhan 🌪️")
-
-		await member.remove_roles(role)
 
 
 @client.command(aliases=["level"])
 async def seviye(ctx,member:discord.Member=None):
-	# levelNames[(user.level)-1])
 	if member == None:
 		member = ctx.author
 
@@ -453,22 +268,11 @@ async def seviye(ctx,member:discord.Member=None):
 				else:
 					embed.add_field(name="Bir sonraki rütbe - 🚀 ",value=f"**{levelNames[user.level]}** rütbesi için kalan puan = **{(experiences[user.level-1])-user.XP}**",inline=False)
 
-
-		# embed.add_field(name="Bir sonraki rütbe - 🚀 ",value=f"**{levelNames[user.level]}** rütbesi için kalan puan = **{(experiences[user.level])-user.XP}**" if not user.haveMaxLevel() else "Maksimum seviyeye ulaştınız!",inline=False)
 			embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
 
 			await ctx.send(embed=embed)
 
 
-@client.command()
-async def emojiekle(ctx,emoji):
-	if ctx.author.id == 373457193271558145 or ctx.author.id == 275971871047024640:
-		channel = get(ctx.guild.channels,id=905888377071616090)
-		emoji = str(emoji)
-		message = await channel.fetch_message(911627238250782790)
-		await message.add_reaction(emoji=emoji)
-	else:
-		pass
 
 @client.command()
 async def clear(ctx,amount=1):
@@ -481,7 +285,6 @@ async def clear(ctx,amount=1):
 		await ctx.channel.send("Bu komutu kullanmaya izniniz yok!")
 
 def changeModifier(location,modifier):
-	# firebase = firebase.FirebaseApplication(serverURL,None)
 	firebase.put(f"modifiers/{location} Çarpanı",'modifier',modifier)
 
 @slash.slash(
@@ -520,11 +323,7 @@ def changeModifier(location,modifier):
 )
 async def _çarpan(ctx:SlashContext,çarpan:int,görüntü:str):
 	if ctx.author.id == 373457193271558145 or ctx.author.id == 275971871047024640:
-		# Change Multiplier
 		changeModifier(görüntü,çarpan)
-		# with open(f"Files/{görüntü} Çarpanı.txt","w") as dosya:
-		# 	dosya.write(str(çarpan))
-		# 	dosya.close()
 		await ctx.send(embed=botEmbed(ctx.guild,client,f"{görüntü} çarpanı şu değere değiştirildi! = **{çarpan}**",f"{görüntü} çarpanı değişimi!"))
 	else:
 		await ctx.send("Bu komutu kullanmaya izniniz yok!")
@@ -533,7 +332,7 @@ def getSortedMembers(ctx):
 	di = {}
 	for member in ctx.guild.members:
 		user = User(member.id)
-		memberName_ = f"{member.display_name} [ A.K.A : {member.name} ]"
+		memberName_ = f"{member.display_name}   //   [ {member.name} ]"
 		if not member.bot:
 			di[memberName_] = [user.XP,user.levelName]
 			sortedMembers = dict(sorted(di.items(),key=lambda item:item[1],reverse=True))
@@ -548,10 +347,9 @@ async def sıralama(ctx):
 	
 		embed=discord.Embed(title="Sıralama",inline=False,color=0x8d42f5)
 		embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
-		# Add fields
+
 		count = 1
-		
-		await asyncio.sleep(1)
+
 		for key,value in sortedMembers.items():
 			embed.add_field(name="{} - {}".format(count,key),value="**Puan**: {}\n**Rütbe**: {}".format(value[0],value[1]),inline=False)
 			count += 1
@@ -614,7 +412,6 @@ async def _gemipuan(ctx:SlashContext,platform:str,gemi:str):
 		shipRole = get(ctx.guild.roles,name=str(gemi))
 		embed = discord.Embed(title="Puan Artışı",description=f"**{shipRole.mention}** adlı geminin mürettebatına **{platformXPs[platform]}** puan eklendi!")
 		await ctx.send(embed=embed)
-		# await ctx.send(embed=botEmbed(ctx.guild,client,description=f"**{shipRole.mention}** adlı geminin mürettebatına **{platformXPs[platform]}** puan eklendi", title="Puan Artışı"))
 		__addPointToSpaceShip(ctx.guild.members, platform, shipRole)
 
 
@@ -649,6 +446,83 @@ async def _kişiselpuan(ctx:SlashContext,kullanıcı:discord.Member,puan:int):
 		await ctx.send("Bu komutu kullanmaya izniniz yok!")
 
 
+@slash.slash(
+	name = "rololuştur",
+	description="Bir rol oluşturmak için kullan!",
+	guild_ids=guildID,
+	options=[
+		create_option(
+			name="rol",
+			description="Bir rol ismi belirle.",
+			option_type=3,
+			required=True
+		),
+		create_option(
+			name="emoji",
+			description="Bir emoji belirle.",
+			option_type=3,
+			required=True
+		)
+	]
+)
+async def createRole(ctx,rol,emoji):
+	guild = ctx.guild
+	roleName = f"{rol} {emoji}"
+	await guild.create_role(name=roleName)
+	role = get(guild.roles,name=roleName)
+	await ctx.send(embed=discord.Embed(title="Rol oluşturma işlemi",description=f"{role.mention} rolü oluşturuldu."))
+
+
+
+
+
+@slash.slash(
+	name = "yetenekağacı",
+	description = "Yetenek ağacına rol eklemek için kullan!",
+	guild_ids = guildID,
+	options=[
+		create_option(
+			name= "rol",
+			description = "Bir rol seç.",
+			option_type=8,
+			required=True, 
+		),
+		create_option(
+			name = "emoji",
+			description="Bir emoji gir.",
+			option_type=3,
+			required=True,
+		),
+		create_option(
+			name="message_id",
+			description = "Emojinin eklenmesini istediğin mesaj id'sini gir.",
+			option_type=3,
+			required=True
+		)
+		
+		]
+)
+async def embed(ctx,rol,emoji:str,message_id):
+	channel = client.get_channel(905888377071616090)
+	message = await channel.fetch_message(911627236510146611)
+	embed = message.embeds[0]
+	di = embed.to_dict()
+	description = str(di['description'])
+	description += "\n"+f"{emoji}:{str(rol)[:-2]}"
+	di['description'] = description
+	embed = discord.Embed.from_dict(di)
+	dictionary[str(emoji)] = str(rol)
+	with open("files/embedDictionary.py","w") as dosya:
+		dosya.write("dictionary = ")
+		dosya.close()
+	with open("files/embedDictionary.py","a",encoding="utf-8") as dosya:
+		dosya.write(str(dictionary))
+		dosya.close()
+	await message.edit(embed=embed)
+	emojiMessage = await channel.fetch_message(message_id)
+	await emojiMessage.add_reaction(str(emoji))
+	await ctx.send(embed=discord.Embed(title="Yetenek ağacı güncellemesi",description=f"{str(rol.mention)} rolü yetenek ağacına eklendi!"))
+
 """ 
 	TEST COMMANDS
 """
@@ -667,6 +541,14 @@ async def _kişiselpuan(ctx:SlashContext,kullanıcı:discord.Member,puan:int):
 # 	message = message or "Bu mesaj DM yoluyla gönderildi"
 # 	await user.send(message)
 
+
+@client.command()
+async def mesaj(ctx,id_:int):
+	if ctx.author.id == 373457193271558145 or ctx.author.id == 275971871047024640:
+		guild = ctx.guild
+		member = guild.get_member(user_id=id_)
+		channel = client.get_channel(id=910547555245494322)
+		await channel.send(f"{member.mention}, <#901248994922098718> kanalında kendinizi tanıttığınız için 250 XP kazandınız!")
 
 client.run(TOKEN)
 
