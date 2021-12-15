@@ -523,24 +523,6 @@ async def embed(ctx,rol,emoji:str,message_id):
 	await emojiMessage.add_reaction(str(emoji))
 	await ctx.send(embed=discord.Embed(title="Yetenek ağacı güncellemesi",description=f"{str(rol.mention)} rolü yetenek ağacına eklendi!"))
 
-""" 
-	TEST COMMANDS
-"""
-
-# @client.command()
-# async def sustur(ctx):
-# 	if isinstance(ctx.channel,discord.channel.DMChannel):
-# 		member = get(client.get_all_members(), id=275971871047024640)
-# 		await member.edit(mute = True)
-		# channel = client.get_channel(id=860636538701611050)
-		# await channel.send("İşlem tamam")
-
-# @client.command()
-# async def DM(ctx,user:discord.Member,*,message=None):
-# 	await ctx.message.delete()
-# 	message = message or "Bu mesaj DM yoluyla gönderildi"
-# 	await user.send(message)
-
 
 @client.command()
 async def mesaj(ctx,id_:int):
