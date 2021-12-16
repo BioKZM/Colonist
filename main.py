@@ -642,39 +642,6 @@ async def _gemipatlat(ctx,gemi,kategori:int):
 	)
 	await message.edit(embed=embed)
 
-""" 
-	TEST COMMANDS
-"""
-# @client.command()
-# async def embedDuzenle(ctx,rol,emoji:str):
-# 	channel = client.get_channel(905888377071616090)
-# 	message = await channel.fetch_message(911627236510146611)
-# 	embed = message.embeds[0]
-# 	di = embed.to_dict()
-# 	# await ctx.channel.send(di)
-# 	# description = str(di['description'])
-# 	description = "Gemide eksik olan mürettebat sen olabilirsin.\nYeteneklerini işaretle! Rolünü seç! Gizli yetenek olmaktan çık!\n"
-# 	for emoji,rol in dictionary.items():
-# 		description += "\n"+f"{emoji}:{str(rol)[:-2]}"
-# 		di['description'] = description
-# 	embed = discord.Embed.from_dict(di)
-# 	dictionary[str(emoji)] = str(rol)
-# 	await message.edit(embed=embed)
-
-# @client.command()
-# async def sustur(ctx):
-# 	if isinstance(ctx.channel,discord.channel.DMChannel):
-# 		member = get(client.get_all_members(), id=275971871047024640)
-# 		await member.edit(mute = True)
-		# channel = client.get_channel(id=860636538701611050)
-		# await channel.send("İşlem tamam")
-
-# @client.command()
-# async def DM(ctx,user:discord.Member,*,message=None):
-# 	await ctx.message.delete()
-# 	message = message or "Bu mesaj DM yoluyla gönderildi"
-# 	await user.send(message)
-
 
 @client.command()
 async def mesaj(ctx,id_:int):
