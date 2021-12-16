@@ -12,14 +12,10 @@ from discord_slash.utils.manage_commands import create_choice, create_option
 # from Files.levels import nextXP, nextLevel
 from discord import ChannelType
 from firebase import firebase
-from functions.embed import botEmbed
+# from functions.embed import botEmbed
 from functions.classes import User,experiences,levelNames
 from files.embedDictionary import dictionary
-
-global message2
-global message3
-embeds = []
-
+from files.openShips import captainHalls
 
 TOKEN = os.environ["TOKEN"]
 serverURL = os.environ["serverURL"]
@@ -151,54 +147,6 @@ async def before_voicech():
 	print("Channel Update Loop OK!")
 voicech.start()
 
-
-
-@client.command()
-async def emojiMessage(ctx):
-	global embeds
-	gameDirector = "🎬"
-	gameDesigner = "🎮"
-	levelDesigner = "🕹️"
-	scriptWriter = "📕"
-	interpreter = "🌍"
-	uxDesigner = "⚠️"
-	socialMediaExpert = "👍"
-	gameDeveloper = "⌨️"
-	visualArtist = "🎨"
-	pixelArtist = "👾"
-	_3dArtist = "🧊"
-	_2dArtist = "🖼️"
-	cellAnimator = "🏃‍♀️"
-	vfxArtist = "💥"
-	uiDesigner = "📺"
-	soundDesigner = "🎵"
-	folleyArtist = "📣"
-	voiceActor = "🎤"
-	singer = "👩‍🎤"
-	dancer = "💃"
-	detective = "🕵️"
-	vampire = "🧛"
-	fighter = "⚔️"
-	ranger = "🏹"
-	wizard = "🧙‍♂️"
-	astronaut = "🚀"
-	duhan = "🌪️"
-
-	emojis = [gameDirector,gameDesigner,levelDesigner,scriptWriter,interpreter,uxDesigner,socialMediaExpert,gameDeveloper,visualArtist,pixelArtist,_3dArtist,_2dArtist,cellAnimator,vfxArtist,uiDesigner,soundDesigner,folleyArtist,voiceActor,singer,dancer]
-	emojis2=[detective,vampire,fighter,ranger,wizard,astronaut,duhan]
-	embed = discord.Embed(title="Yeteneklerin",description="Gemide eksik olan mürettebat sen olabilirsin.\nYeteneklerini işaretle! Rolünü seç! Gizli yetenek olmaktan çık!\n\n🎬:Game Director\n🎮:Game Designer\n🕹️: Level Designer\n📕:Script Writer\n🌍:Interpreter\n⚠️:UX Designer\n👍:Social Media Expert\n⌨️: Game Developer\n🎨: Visual Artist\n👾:Pixel Artist\n🧊:3D Artist\n🖼️:2D Artist\n🏃‍♀️:Cell Animator\n💥:VFX Artist\n📺:UI Designer\n🎵:Sound Designer\n📣:Folley Artist\n🎤:Voice Actor\n👩‍🎤:Singer\n💃:Dancer\n🕵️:Detective\n🧛:Vampire\n⚔️:Fighter\n:🏹Ranger\n🧙‍♂️:Wizard\n🚀:Astronaut\n🌪️:Duhan",color=0x6A0DAD)
-	await ctx.channel.send(embed=embed)
-	embeds = [embed]
-	message2 = await ctx.channel.send("Aşağıdaki emojilere basarak rollerini seçebilirsin.")
-	message3 = await ctx.channel.send("Devamı ↓ ")
-	for emoji in emojis:
-		await message2.add_reaction(emoji)
-	for emoji in emojis2:
-		await message3.add_reaction(emoji)
-
-	return embeds
-
-
 @client.event
 async def on_raw_reaction_add(payload):
 	channel = payload.channel_id
@@ -213,6 +161,16 @@ async def on_raw_reaction_add(payload):
 				if str(reaction) == str(emoji):
 					role = get(guild.roles,name=role)
 					await member.add_roles(role)
+	
+	for gemi,id in captainHalls.items():
+		if channel == id:
+			if str(reaction) == "🚀":
+				if not member.bot:
+					role = get(guild.roles,name =f"{gemi} - Captain" )
+					await member.add_roles(role)
+					gemi = str(f"{gemi}").lower()
+					channel = get(guild.channels,name=f"{gemi}-hall")
+					await channel.delete()
 
 
 
@@ -502,7 +460,7 @@ async def createRole(ctx,rol,emoji):
 		
 		]
 )
-async def embed(ctx,rol,emoji:str,message_id):
+async def embed(ctx,rol,emoji:str,message_id:int):
 	channel = client.get_channel(905888377071616090)
 	message = await channel.fetch_message(911627236510146611)
 	embed = message.embeds[0]
@@ -522,6 +480,200 @@ async def embed(ctx,rol,emoji:str,message_id):
 	emojiMessage = await channel.fetch_message(message_id)
 	await emojiMessage.add_reaction(str(emoji))
 	await ctx.send(embed=discord.Embed(title="Yetenek ağacı güncellemesi",description=f"{str(rol.mention)} rolü yetenek ağacına eklendi!"))
+
+
+
+async def createChannel(ctx,name,category):
+	guild = ctx.guild
+	await guild.create_text_channel(name=name,category=category)
+
+async def createVC(ctx,name,category):
+	guild = ctx.guild
+	await guild.create_voice_channel(name=name,category=category)
+
+@slash.slash(
+	name="gemiyap",
+	description="Bir gemi oluşturmak için kullan!",
+	guild_ids=guildID,
+	options=[
+		create_option(
+			name="gemi",
+			description="Gemi ismini gir.",
+			option_type=3,
+			required=True,
+		)
+	]
+)
+async def _createSpaceShip(ctx:SlashContext,gemi):
+	guild = ctx.guild
+	await guild.create_role(name=f"🚀{gemi}")
+	await guild.create_role(name=f"🚀{gemi} - Captain")
+	unit = get(guild.roles,name="Unit")
+	shipRole = get(guild.roles,name=f"🚀{gemi}")
+	captain = get(guild.roles,name=f"🚀{gemi} - Captain")
+	embed = discord.Embed(
+		title = "Gemi Oluşturma İşlemi",
+		description = f"{shipRole.mention} gemisi oluşturuluyor",
+		color = 0x8d42f5
+	)
+	embedMessage = await ctx.channel.send(embed=embed)
+	overwrites = {
+		unit : discord.PermissionOverwrite(
+			view_channel=True,
+			read_messages=True,
+			send_messages=False,
+			speak=False,
+			read_message_history=True,
+			stream=False,
+			connect=True,),
+		shipRole : discord.PermissionOverwrite(
+			view_channel=True,
+			read_messages=True,
+			send_messages=True,
+			speak=True,
+			read_message_history=True,
+			stream=True,
+			add_reactions=True,
+			attach_files=True,
+			connect=True,
+			embed_links=True,
+			use_external_emojis=True,),
+		captain : discord.PermissionOverwrite(
+			view_channel=True,
+			read_messages=True,
+			send_messages=True,
+			speak=True,
+			read_message_history=True,
+			stream=True,
+			manage_messages=True,
+			manage_channels=True,
+			add_reactions=True,
+			attach_files=True,
+			deafen_members=True,
+			connect=True,
+			use_external_emojis=True,
+			embed_links=True,
+			mute_members=True,
+			move_members=True,)
+	}
+	category = await guild.create_category(name=f"🚀{gemi}",overwrites=overwrites)
+	await createChannel(ctx,f"🚀{gemi}-hall",category)
+	await createChannel(ctx,"📓captain-s-logbook",category)
+	await createChannel(ctx,"💬chat-box",category)
+	await createChannel(ctx,"🧠brai̇nstorm-notes",category)
+	await createChannel(ctx,"📋checklist",category)
+	await createChannel(ctx,"🔗reference-archive",category)
+	await createChannel(ctx,"📜documents",category)
+	await createChannel(ctx,"🎨visual-arts",category)
+	await createChannel(ctx,"🎹sound-arts",category)
+
+	await createVC(ctx,"🟥 Red Room",category)
+	await createVC(ctx,"⬛ Black Room",category)
+	await createVC(ctx,"🟩 Green Room",category)
+
+
+	gemi = str(f"🚀{gemi}").lower()
+	captainsHall = get(guild.channels,name=f"{gemi}-hall")
+
+	message = await captainsHall.send("**Geminin kaptanını** belirlemek için, **kaptan** olacak kişinin aşağıdaki emojiye basması gerekmektedir.\n**Uyarı**, bu **tek seferlik** bir seçim olduğu için, tıklamadan önce **iyice karar vermeniz** tavsiye edilir.")
+
+	await message.add_reaction("🚀")
+
+	captainHalls[str(shipRole)] = (captainsHall.id)
+	with open("files/openShips.py","w",encoding="utf-8") as dosya:
+		dosya.write("captainHalls = ")
+		dosya.write(str(captainHalls)+"\n")
+
+		dosya.close()
+	embed = discord.Embed(
+		title = "Gemi Oluşturma İşlemi",
+		description = f"{shipRole.mention} gemisi oluşturuldu. Katılacak mürettebatın dikkatine!",color=0x8d42f5
+	)
+	await embedMessage.edit(embed=embed)
+
+@slash.slash(
+	name="gemipatlat",
+	description="Bir gemiyi imha etmek için kullan.",
+	guild_ids=guildID,
+	options=[
+		create_option(
+			name="gemi",
+			description="İmha edilecek geminin ismini girin.",
+			option_type=3,
+			required=True
+		),
+		create_option(
+			name="kategori",
+			description="İmha edilecek geminin bulunduğu kategoriyi seçiniz.",
+			option_type=7,
+			required=True
+		)
+	]
+)
+async def _gemipatlat(ctx,gemi,kategori:int):
+	guild = ctx.guild
+	role = get(guild.roles,name=f"🚀{gemi}")
+	captainRole = get(guild.roles,name=f"🚀{gemi} - Captain")
+	embed = discord.Embed(
+		title = "Gemi İmha İşlemi",
+		description = f"{role.mention} gemisi patlatılıyor!",
+		color = 0x8d42f5
+	)
+	message = await ctx.send(embed=embed)
+	channel = client.get_channel(id = kategori.id)
+	for channel in channel.text_channels:
+		await channel.delete()
+	channel = client.get_channel(id = kategori.id)
+	for voicechannel in channel.voice_channels:
+		await voicechannel.delete()
+	await channel.delete()
+	
+	await role.delete()
+	await captainRole.delete()
+	del captainHalls[f'🚀{gemi}']
+	with open("files/openShips.py","w",encoding="utf-8") as dosya:
+		dosya.write("captainHalls = ")
+		dosya.write(str(captainHalls))
+		dosya.close()
+	embed = discord.Embed(
+		title = "İşlem Başarılı!",
+		description = "Gemi başarıyla imha edildi!",
+		color = 0x8d42f5
+	)
+	await message.edit(embed=embed)
+
+""" 
+	TEST COMMANDS
+"""
+# @client.command()
+# async def embedDuzenle(ctx,rol,emoji:str):
+# 	channel = client.get_channel(905888377071616090)
+# 	message = await channel.fetch_message(911627236510146611)
+# 	embed = message.embeds[0]
+# 	di = embed.to_dict()
+# 	# await ctx.channel.send(di)
+# 	# description = str(di['description'])
+# 	description = "Gemide eksik olan mürettebat sen olabilirsin.\nYeteneklerini işaretle! Rolünü seç! Gizli yetenek olmaktan çık!\n"
+# 	for emoji,rol in dictionary.items():
+# 		description += "\n"+f"{emoji}:{str(rol)[:-2]}"
+# 		di['description'] = description
+# 	embed = discord.Embed.from_dict(di)
+# 	dictionary[str(emoji)] = str(rol)
+# 	await message.edit(embed=embed)
+
+# @client.command()
+# async def sustur(ctx):
+# 	if isinstance(ctx.channel,discord.channel.DMChannel):
+# 		member = get(client.get_all_members(), id=275971871047024640)
+# 		await member.edit(mute = True)
+		# channel = client.get_channel(id=860636538701611050)
+		# await channel.send("İşlem tamam")
+
+# @client.command()
+# async def DM(ctx,user:discord.Member,*,message=None):
+# 	await ctx.message.delete()
+# 	message = message or "Bu mesaj DM yoluyla gönderildi"
+# 	await user.send(message)
 
 
 @client.command()
