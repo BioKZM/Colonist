@@ -18,7 +18,7 @@ Gemi oluşturup patlatabileceğimiz iki tane komut eklendi!
 Yetenekler kanalı için, yetenek ağacını düzenleyip, rol oluşturup onu bir emojiyle tanımlayarak, 
 emojiye basıldığında seçilen rolün verilmesini sağlayan iki tane komut eklendi!
 
-`/yetenekağacı` {rol} {emoji} {messagge_id} // Mesaj ID'si, emojini ekleneceği mesaj için gerekli bir parametre
+`/yetenekağacı {rol} {emoji} {messagge_id}` // Mesaj ID'si, emojini ekleneceği mesaj için gerekli bir parametre
 
 # ChangeLog v1.1 // Re-launch of Colonist
 
