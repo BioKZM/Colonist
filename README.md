@@ -4,7 +4,7 @@ Yeni UI sistemi ve sunucu hakkında bilgi alabileceğimiz iki komut eklendi!
 
 `!bilgi`
 
-`!mesajsil // Bu komut ile en son attığın bilgi mesajını silebilirsin. Her seferde sadece bir kere !bilgi kullanabilirsin.` 
+`!mesajsil`  // Bu komut ile en son attığın bilgi mesajını silebilirsin. Her seferde sadece bir kere !bilgi kullanabilirsin.
 
 # ChangeLog v1.3
  
@@ -18,7 +18,7 @@ Gemi oluşturup patlatabileceğimiz iki tane komut eklendi!
 Yetenekler kanalı için, yetenek ağacını düzenleyip, rol oluşturup onu bir emojiyle tanımlayarak, 
 emojiye basıldığında seçilen rolün verilmesini sağlayan iki tane komut eklendi!
 
-`/yetenekağacı {rol} {emoji} {messagge_id} // Mesaj ID'si, emojini ekleneceği mesaj için gerekli bir parametre`
+`/yetenekağacı` {rol} {emoji} {messagge_id} // Mesaj ID'si, emojini ekleneceği mesaj için gerekli bir parametre
 
 # ChangeLog v1.1 // Re-launch of Colonist
 
