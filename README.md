@@ -1,7 +1,9 @@
 # ChangeLog v1.4
 
 Yeni UI sistemi ve sunucu hakkında bilgi alabileceğimiz iki komut eklendi!
+
 `!bilgi`
+
 `!mesajsil // Bu komut ile en son attığın bilgi mesajını silebilirsin. Her seferde sadece bir kere !bilgi kullanabilirsin.` 
 
 # ChangeLog v1.3
