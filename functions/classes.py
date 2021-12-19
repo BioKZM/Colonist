@@ -6,10 +6,10 @@ from discord.utils import get
 
 client = commands.Bot(command_prefix=['!','-'], intents=discord.Intents.all(),help_command=None,case_insensitive=True)
 
-serverURL =os.environ['TOKEN']
+serverURL = "https://colonist-6d8a0-default-rtdb.firebaseio.com/"
 
-experiences = [99,699,1987,6666,9999,30000,90000,300000,900000,10000001]
-levelNames = ["Unit","Guest","Colony Member","Open Crew","Crew","Captain","Judge","Colony Manager","Mars Lover","Chief of the Colony","Partner"] 
+experiences = [250,1987,6666,9999,30000,90000,300000,900000,10000001]
+levelNames = ["Guest","Colony Member","Open Crew","Crew","Captain","Judge","Colony Manager","Mars Lover","Chief of the Colony","Partner"] 
 
 
 
@@ -41,7 +41,7 @@ class User():
 
 	def getLevel(self,XP):
 		for level in range(0,len(experiences)+1):
-			if XP < 99:
+			if XP < 250:
 				level = 1
 				return level
 			if level < 3:
@@ -54,7 +54,7 @@ class User():
 					return level
 			if XP >= experiences[-1]:
 				level = len(experiences)+1
-				return level																		
+				return level																	
 
 	def putLevel(self,level):
 
@@ -81,7 +81,7 @@ class User():
 	def __setVariables(self):
 		self.XP, self.boolMessage,self.level,self.modifier = self.__getData(self.id)
 		self.levelName = levelNames[self.level-1]
-		if not self.level == 11:
+		if not self.level == 10:
 			self.currentLevelMaxXP = experiences[self.level-1]
 
 	def __userNotExists(self): 
