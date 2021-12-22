@@ -668,19 +668,6 @@ async def embedDuzenle(ctx):
 	dictionary[str(emoji)] = str(rol)
 	await message.edit(embed=embed)
 
-# @client.command()
-# async def sustur(ctx):
-# 	if isinstance(ctx.channel,discord.channel.DMChannel):
-# 		member = get(client.get_all_members(), id=275971871047024640)
-# 		await member.edit(mute = True)
-		# channel = client.get_channel(id=860636538701611050)
-		# await channel.send("İşlem tamam")
-
-# @client.command()
-# async def DM(ctx,user:discord.Member,*,message=None):
-# 	await ctx.message.delete()
-# 	message = message or "Bu mesaj DM yoluyla gönderildi"
-# 	await user.send(message)
 @client.command()
 async def mesajsil(ctx):
 	await ctx.message.delete()
