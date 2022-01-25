@@ -6,6 +6,8 @@ from discord.utils import get
 
 client = commands.Bot(command_prefix=['!','-'], intents=discord.Intents.all(),help_command=None,case_insensitive=True)
 
+serverURL = #serverURL
+
 
 experiences = [250,1987,6666,9999,30000,90000,300000,900000,10000001]
 levelNames = ["Guest","Colony Member","Open Crew","Crew","Captain","Judge","Colony Manager","Mars Lover","Chief of the Colony","Partner"] 
