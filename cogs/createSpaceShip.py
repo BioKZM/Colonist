@@ -133,6 +133,7 @@ class CreateSpaceShip(commands.Cog):
 
 
         ship = str(f"🚀{gemi}").lower()
+        ship = ship.replace(" ","-")
         captainsHall = get(guild.channels,name=f"{ship}-hall")
 
         with open("files/captainHalls.json") as file:
