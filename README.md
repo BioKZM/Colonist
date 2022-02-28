@@ -1,3 +1,7 @@
+# ChangeLog v2.0.1
+
+Gemi oluşturmayla ilgili izinler düzenlendi.
+
 # ChangeLog v2.0
 
 Botun dosyaları harici sunucudan alınıp tekrardan yerel sisteme yerleştirildi. Gemi oluşturma ve patlatma fonksiyonlarında değişime gidildi.
