@@ -41,6 +41,7 @@ class CreateSpaceShip(commands.Cog):
         unit = get(guild.roles,name="Unit")
         shipRole = get(guild.roles,name=f"🚀{gemi}")
         captain = get(guild.roles,name=f"🚀{gemi} - Captain")
+        engineer = get(guild.roles,name = "The Engineer")
         embed = discord.Embed(
             title = "Gemi Oluşturma İşlemi",
             description = f"{shipRole.mention} gemisi oluşturuluyor",
@@ -79,6 +80,24 @@ class CreateSpaceShip(commands.Cog):
                 view_channel=True,
                 ),
             captain : discord.PermissionOverwrite(
+                add_reactions=True,
+                attach_files=True,
+                connect=True,
+                deafen_members=True,
+                embed_links=True,
+                external_emojis=True,
+                manage_channels=True,
+                move_members=True,
+                mute_members=True,
+                read_message_history=True,
+                read_messages=True,
+                send_messages=True,
+                speak=True,
+                stream=True,
+                use_external_emojis=True,
+                view_channel=True,
+            ),
+            engineer : discord.PermissionOverwrite(
                 add_reactions=True,
                 attach_files=True,
                 connect=True,
