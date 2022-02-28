@@ -36,13 +36,14 @@ class OnRawReactionAdd(commands.Cog):
             captainHalls = json.load(file)
 
         for gemi,id in captainHalls.items():
-            gemi = gemi.replace(" ","-")
+            
             if channel == id:
                 if str(reaction) == "🚀":
                     if not member.bot:
                         role = get(guild.roles,name=f"🚀{gemi} - Captain" )
                         await member.add_roles(role)
                         gemi = str(f"{gemi}").lower()
+                        gemi = gemi.replace(" ","-")
                         channel = get(guild.channels,name=f"🚀{gemi}-hall")
                         await channel.delete()
 
