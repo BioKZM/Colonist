@@ -1,3 +1,9 @@
+# ChangeLog v2.0
+
+Botun dosyaları harici sunucudan alınıp tekrardan yerel sisteme yerleştirildi. Gemi oluşturma ve patlatma fonksiyonlarında değişime gidildi.
+
+Şimdilik düzgün çalışmamasından ötürü `!bilgi` komutu devre dışı bırakıldı.
+
 # ChangeLog v1.4
 
 Yeni UI sistemi ve sunucu hakkında bilgi alabileceğimiz iki komut eklendi!
