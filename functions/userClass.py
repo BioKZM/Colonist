@@ -70,7 +70,6 @@ class User():
 		self.XP = self.data['XP']
 		self.level = self.data['level']
 		self.modifier = self.data['modifier']
-		# self.currentLevelMaximumXP = self.data['currentLevelMaximumXP']
 		self.messageBool = self.data['messageBool'] 
 		self.currentLevelMaximumXP = experiences[self.data['level']]
 		self.levelName = levelNames[self.data['level']]

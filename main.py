@@ -1,28 +1,12 @@
-# import urllib.request
-# import asyncio
-# import sys
-# import re
 import discord
 import os
 import json
-# import random
 from datetime import datetime
-
 import requests
-# from discord import ChannelType
 from discord.ext import commands
 from discord.utils import get
 from discord_slash import SlashCommand
-# from discord_slash.utils.manage_commands import create_choice, create_option
-# from discord_ui import UI, Button, ButtonStyle
-# from firebase import firebase
 
-# from files.embedDictionary import dictionary
-# from files.infoMessage import info
-# from files.linkDescription import description
-# from files.openShips import captainHalls
-# from functions.classes import User, experiences, levelNames
-# from functions.embed import botEmbed
 from keep_alive import keep_alive
 
 TOKEN = os.environ["TOKEN"]
