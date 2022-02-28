@@ -36,6 +36,7 @@ class OnRawReactionAdd(commands.Cog):
             captainHalls = json.load(file)
 
         for gemi,id in captainHalls.items():
+            gemi = gemi.replace("-"," ")
             if channel == id:
                 if str(reaction) == "🚀":
                     if not member.bot:
