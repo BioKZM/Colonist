@@ -1,0 +1,32 @@
+{
+    "1": {
+        "emoji": "<:instagram:923593721499508766>",
+        "sosyal_medya": "[Instagram]",
+        "link": "(https://www.instagram.com/marsgamecolony/)"
+    },
+    "2": {
+        "emoji": "<:twitter:923593743922257940>",
+        "sosyal_medya": "[Twitter]",
+        "link": "(https://twitter.com/marsgamecolony)"
+    },
+    "3": {
+        "emoji": "<:linkedin:923593774326767636>",
+        "sosyal_medya": "[LinkedIn]",
+        "link": "(https://www.linkedin.com/company/mars-game-colony/about/?viewAsMember=true)"
+    },
+    "4": {
+        "emoji": "<:youtube:923593791007510610>",
+        "sosyal_medya": "[YouTube]",
+        "link": "(https://www.youtube.com/channel/UCjonZWIIYc7ibxTliXHD3DQ)"
+    },
+    "5": {
+        "emoji": "<:Mars_Avatar:891105594612797450>",
+        "sosyal_medya": "[Mars Game Colony Web Sitesi]",
+        "link": "(https://www.marsgamecolony.com/)"
+    },
+    "6": {
+        "emoji": "<:googleplay:930209805249966110>",
+        "sosyal_medya": "[Space Dancers]",
+        "link": "(https://play.google.com/store/apps/details?id=com.JamSquad.SpaceDancers&hl=tr&gl=US)"
+    }
+}
